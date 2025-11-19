@@ -1,10 +1,11 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { ProductCard, SearchBar } from "@/components/marketplace";
-import { mockProducts } from "@/data/mockData";
 import { Product } from "@/types";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet } from "react-native";
+import { getAllProductsPaginated } from "@/services/products";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function SearchScreen() {
   const { q, category } = useLocalSearchParams<{
@@ -12,24 +13,36 @@ export default function SearchScreen() {
     category?: string;
   }>();
   const router = useRouter();
+  const { colors } = useTheme();
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleProductPress = (product: Product) => {
     router.push(`/product/${product.id}` as any);
   };
 
-  const filteredProducts = mockProducts.filter((product) => {
-    if (category) {
-      return product.categoryId === category;
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        setLoading(true);
+        const filters: any = {};
+        if (category) filters.categoryId = category;
+        if (q) filters.search = q;
+        
+        const { items } = await getAllProductsPaginated(1, 50, filters);
+        setProducts(items);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    if (q) {
-      const query = q.toLowerCase();
-      return (
-        product.name.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query)
-      );
-    }
-    return true;
-  });
+    fetchProducts();
+  }, [q, category]);
+
+  const filteredProducts = products;
 
   return (
     <ScrollView style={styles.container}>
@@ -37,6 +50,11 @@ export default function SearchScreen() {
         onSearch={(query) => router.push(`/search?q=${query}` as any)}
       />
 
+      {loading ? (
+        <View style={[styles.section, styles.centered]} color="background">
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : (
       <View style={styles.section} color="background">
         <Text type="subtitle" style={styles.sectionTitle}>
           {q ? `Resultados para "${q}"` : "Todos os produtos"}
@@ -65,6 +83,7 @@ export default function SearchScreen() {
           </View>
         )}
       </View>
+      )}
     </ScrollView>
   );
 }
@@ -72,6 +91,11 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: 200,
   },
   section: {
     paddingHorizontal: 16,

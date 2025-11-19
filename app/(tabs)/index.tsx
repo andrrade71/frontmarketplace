@@ -1,6 +1,13 @@
 import { Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
-import { mockCategories } from "@/data/mockData";
+import {
+  BooksIcon,
+  FootballIcon,
+  HomeIcon,
+  IPhoneIcon,
+  LipstickIcon,
+  ShirtIcon,
+} from "@/components/icons";
 import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -19,7 +26,16 @@ export default function HomeScreen() {
     router.push(`/search?category=${category.id}`);
   };
 
-  const handleSearch = (query: string) => {
+  const categories: Category[] = [
+    { id: "1", name: "Eletrônicos", icon: "iphone", productCount: 0 },
+    { id: "2", name: "Moda", icon: "shirt", productCount: 0 },
+    { id: "3", name: "Casa", icon: "home", productCount: 0 },
+    { id: "4", name: "Esportes", icon: "football", productCount: 0 },
+    { id: "5", name: "Livros", icon: "books", productCount: 0 },
+    { id: "6", name: "Beleza", icon: "lipstick", productCount: 0 },
+  ];
+
+  const onSearch = (query: string) => {
     router.push(`/search?q=${query}`);
   };
 
@@ -38,8 +54,9 @@ export default function HomeScreen() {
     <ProductsList
       onPressItem={handleProductPress}
       featuredProducts={featuredProducts}
-      onSearch={handleSearch}
+      onSearch={onSearch}
       onCategoryPress={handleCategoryPress}
+      categories={categories}
     />
   );
 }
@@ -49,11 +66,13 @@ function ProductsList({
   featuredProducts,
   onSearch,
   onCategoryPress,
+  categories,
 }: {
   onPressItem: (p: Product) => void;
   featuredProducts: Product[];
   onSearch: (query: string) => void;
   onCategoryPress: (category: Category) => void;
+  categories: Category[];
 }) {
   const PAGE_LIMIT = 10;
 
@@ -111,7 +130,7 @@ function ProductsList({
               Categorias
             </Text>
             <View style={styles.categoriesGrid} color="background">
-              {mockCategories.map((category) => (
+              {categories.map((category) => (
                 <CategoryCard
                   key={category.id}
                   category={category}

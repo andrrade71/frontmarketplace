@@ -1,22 +1,53 @@
 import { Text, View } from "@/components/Themed";
 import { Badge, Button } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
-import { mockProducts } from "@/data/mockData";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
-import { Image, ScrollView, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Image, ScrollView, StyleSheet } from "react-native";
+import { getProductById, ProductDetail } from "@/services/product";
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { colors } = useTheme();
 
-  const product = mockProducts.find((p) => p.id === id);
+  const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!product) {
+  useEffect(() => {
+    async function fetchProduct() {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getProductById(String(id));
+        setProduct(data);
+      } catch (err: any) {
+        setError(err.message || "Erro ao carregar produto");
+        console.error("Failed to load product:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <View style={[styles.container, styles.centered]}>
         <Text type="title">Produto não encontrado</Text>
+        {error && <Text color="textSecondary">{error}</Text>}
       </View>
     );
   }
@@ -102,6 +133,10 @@ export default function ProductDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: "100%",
