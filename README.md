@@ -1,6 +1,6 @@
 # 🛍️ Marketplace App
 
-Aplicativo de marketplace desenvolvido com React Native, Expo e TypeScript, com foco em **componentes reutilizáveis** e **integração com API REST**.
+Aplicativo de marketplace desenvolvido com React Native, Expo e TypeScript.
 
 ## 📋 Índice
 
