@@ -1,7 +1,12 @@
 import { Text, View } from "@/components/Themed";
 import { Badge, Button } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
-import { getProductById, getProductReviews, ProductDetail, Review } from "@/services/product";
+import {
+  getProductById,
+  getProductReviews,
+  ProductDetail,
+  Review,
+} from "@/services/product";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet } from "react-native";
@@ -26,7 +31,7 @@ export default function ProductDetailScreen() {
         setError(null);
         const data = await getProductById(String(id));
         setProduct(data);
-        
+
         // Fetch reviews
         setLoadingReviews(true);
         try {
@@ -130,24 +135,32 @@ export default function ProductDetailScreen() {
           <Text type="subtitle" style={styles.sectionTitle}>
             Avaliações ({reviews.length})
           </Text>
-          
+
           {loadingReviews ? (
             <ActivityIndicator size="small" color={colors.primary} />
           ) : reviews.length > 0 ? (
             reviews.map((review) => (
-              <View key={review.id} style={styles.reviewCard} color="background">
+              <View
+                key={review.id}
+                style={styles.reviewCard}
+                color="background"
+              >
                 <View style={styles.reviewHeader} color="background">
                   <View style={styles.reviewUser} color="background">
-                    <Text style={styles.reviewUsername}>{review.user.username}</Text>
+                    <Text style={styles.reviewUsername}>
+                      {review.user.username}
+                    </Text>
                     <Text color="textSecondary" style={styles.reviewDate}>
-                      {review.createdAt.toLocaleDateString('pt-BR')}
+                      {review.createdAt.toLocaleDateString("pt-BR")}
                     </Text>
                   </View>
                   <View style={styles.reviewRating} color="background">
                     <Text style={[styles.ratingText, { color: colors.rating }]}>
                       ★
                     </Text>
-                    <Text style={styles.reviewRatingText}>{review.rating.toFixed(1)}</Text>
+                    <Text style={styles.reviewRatingText}>
+                      {review.rating.toFixed(1)}
+                    </Text>
                   </View>
                 </View>
                 <Text color="textSecondary" style={styles.reviewComment}>

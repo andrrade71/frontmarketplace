@@ -1,7 +1,7 @@
+import { Category } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
-import { Category } from "@/types";
 
 const BASE_URL = Constants.expoConfig?.extra?.baseUrl;
 

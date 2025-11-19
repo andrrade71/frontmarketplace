@@ -1,8 +1,8 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { ProductCard, SearchBar } from "@/components/marketplace";
 import { useTheme } from "@/context/ThemeContext";
-import { getAllProductsPaginated } from "@/services/products";
 import { getCategories } from "@/services/categories";
+import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";

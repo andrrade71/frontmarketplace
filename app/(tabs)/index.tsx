@@ -1,7 +1,7 @@
 import { Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
-import { getAllProductsPaginated } from "@/services/products";
 import { getCategories } from "@/services/categories";
+import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";

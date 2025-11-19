@@ -87,9 +87,12 @@ export async function getProductReviews(productId: string): Promise<Review[]> {
     const token = await AsyncStorage.getItem("authToken");
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
-    const response = await axios.get(`${BASE_URL}/products/${productId}/reviews`, {
-      headers,
-    });
+    const response = await axios.get(
+      `${BASE_URL}/products/${productId}/reviews`,
+      {
+        headers,
+      }
+    );
 
     const apiReviews = response.data?.reviews || [];
 
