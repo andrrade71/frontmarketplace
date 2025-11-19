@@ -1,13 +1,12 @@
-import { ScrollView, Text, View } from "@/components/Themed";
+import { Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
 import { mockCategories } from "@/data/mockData";
+import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, ActivityIndicator, FlatList } from "react-native";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getAllProductsPaginated } from "@/services/products";
-import { useQuery } from "@tanstack/react-query";
+import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -36,7 +35,7 @@ export default function HomeScreen() {
   }, [firstPage.data]);
 
   return (
-    <ProductsList 
+    <ProductsList
       onPressItem={handleProductPress}
       featuredProducts={featuredProducts}
       onSearch={handleSearch}
@@ -45,12 +44,12 @@ export default function HomeScreen() {
   );
 }
 
-function ProductsList({ 
+function ProductsList({
   onPressItem,
   featuredProducts,
   onSearch,
   onCategoryPress,
-}: { 
+}: {
   onPressItem: (p: Product) => void;
   featuredProducts: Product[];
   onSearch: (query: string) => void;
@@ -60,7 +59,8 @@ function ProductsList({
 
   const fetchProducts = useInfiniteQuery({
     queryKey: ["products"],
-    queryFn: ({ pageParam = 1 }) => getAllProductsPaginated(pageParam, PAGE_LIMIT),
+    queryFn: ({ pageParam = 1 }) =>
+      getAllProductsPaginated(pageParam, PAGE_LIMIT),
     initialPageParam: 1,
     getNextPageParam: (lastPage: any) => {
       const meta = lastPage.meta as any;
@@ -68,7 +68,9 @@ function ProductsList({
         return meta.page < meta.totalPages ? meta.page + 1 : undefined;
       }
       // fallback: if items length === limit, assume next page exists
-      return lastPage.items.length === PAGE_LIMIT ? (meta.page || 1) + 1 : undefined;
+      return lastPage.items.length === PAGE_LIMIT
+        ? (meta.page || 1) + 1
+        : undefined;
     },
   });
 
@@ -92,7 +94,10 @@ function ProductsList({
       data={products}
       keyExtractor={(item) => item.id}
       numColumns={2}
-      columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: 16 }}
+      columnWrapperStyle={{
+        justifyContent: "space-between",
+        paddingHorizontal: 16,
+      }}
       renderItem={({ item }) => (
         <ProductCard product={item} onPress={onPressItem} />
       )}

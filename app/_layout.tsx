@@ -1,9 +1,9 @@
 import { ThemeProvider } from "@/context/ThemeContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from "react";
 
 export {

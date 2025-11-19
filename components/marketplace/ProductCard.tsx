@@ -39,7 +39,10 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
         <View style={styles.imageContainer}>
           <Image
             source={{ uri: product.image }}
-            style={[styles.image, { backgroundColor: colors.backgroundTertiary }]}
+            style={[
+              styles.image,
+              { backgroundColor: colors.backgroundTertiary },
+            ]}
             resizeMode="contain"
           />
           {product.discount && (
@@ -108,8 +111,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: CARD_WIDTH,
     position: "relative",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: "90%",

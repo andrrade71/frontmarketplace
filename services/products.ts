@@ -69,17 +69,24 @@ export async function getProductsByUserId(userId: string) {
 export async function getAllProductsPaginated(
   page = 1,
   limit = 10,
-  filters?: { categoryId?: string; minPrice?: number; maxPrice?: number; search?: string }
+  filters?: {
+    categoryId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    search?: string;
+  }
 ) {
   try {
-    const token = await AsyncStorage.getItem('authToken');
+    const token = await AsyncStorage.getItem("authToken");
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
     const params: any = { page, limit };
     if (filters) {
       if (filters.categoryId) params.categoryId = filters.categoryId;
-      if (typeof filters.minPrice === 'number') params.minPrice = String(filters.minPrice);
-      if (typeof filters.maxPrice === 'number') params.maxPrice = String(filters.maxPrice);
+      if (typeof filters.minPrice === "number")
+        params.minPrice = String(filters.minPrice);
+      if (typeof filters.maxPrice === "number")
+        params.maxPrice = String(filters.maxPrice);
       if (filters.search) params.search = filters.search;
     }
 
@@ -93,18 +100,21 @@ export async function getAllProductsPaginated(
     // try extract pagination metadata from body or headers
     const metaFromBody = response.data?.meta;
     const totalItemsFromHeader =
-      response.headers?.['x-total-count'] || response.headers?.['X-Total-Count'];
+      response.headers?.["x-total-count"] ||
+      response.headers?.["X-Total-Count"];
 
     const normalized = apiProducts.map((p: any) => ({
       id: String(p.id),
-      name: p.title || p.name || '',
-      description: p.description || '',
-      price: typeof p.price === 'string' ? parseFloat(p.price) : p.price || 0,
+      name: p.title || p.name || "",
+      description: p.description || "",
+      price: typeof p.price === "string" ? parseFloat(p.price) : p.price || 0,
       originalPrice: undefined,
       discount: undefined,
-      image: p.image || (p.images && p.images[0]) || '',
+      image: p.image || (p.images && p.images[0]) || "",
       images: p.images ? p.images : p.image ? [p.image] : [],
-      categoryId: p.categories?.id ? String(p.categories.id) : p.categoryId || '',
+      categoryId: p.categories?.id
+        ? String(p.categories.id)
+        : p.categoryId || "",
       rating: p.rating?.rate || 0,
       reviewsCount: p.rating?.count || 0,
       inStock: true,
@@ -116,7 +126,8 @@ export async function getAllProductsPaginated(
     };
 
     if (metaFromBody) {
-      meta.totalItems = metaFromBody.totalItems || metaFromBody.total || undefined;
+      meta.totalItems =
+        metaFromBody.totalItems || metaFromBody.total || undefined;
       meta.totalPages = metaFromBody.totalPages || undefined;
       meta.page = metaFromBody.page || page;
       meta.limit = metaFromBody.limit || limit;
@@ -136,9 +147,14 @@ export async function getAllProductsPaginated(
     return { items: normalized, meta };
   } catch (error: any) {
     if (error?.response?.status === 401) {
-      await AsyncStorage.removeItem('authToken');
+      await AsyncStorage.removeItem("authToken");
     }
-    console.error('getAllProductsPaginated error:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Failed to fetch products');
+    console.error(
+      "getAllProductsPaginated error:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch products"
+    );
   }
 }
