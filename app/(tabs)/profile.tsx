@@ -1,22 +1,236 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { Avatar, Button, Card } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
-import React from "react";
-import { StyleSheet, Switch } from "react-native";
+import { getUserProfile, login } from "@/services/auth";
+import { getProductsByUserId } from "@/services/products";
+import { User, Product } from "@/types";
+import { ProductCard } from "@/components/marketplace/ProductCard";
+import { FlatList } from "react-native";
+import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Switch,
+  TextInput,
+} from "react-native";
 
 export default function ProfileScreen() {
   const { colors, colorScheme, toggleTheme } = useTheme();
+  const [user, setUser] = useState<User | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = await AsyncStorage.getItem("authToken");
+      if (token) {
+        try {
+          const userData = await getUserProfile();
+          setUser(userData);
+          // fetch user's products
+          try {
+            setProductsLoading(true);
+            const list = await getProductsByUserId(String(userData.id));
+            setProducts(list);
+          } catch (e) {
+            console.warn('Failed to load user products', e);
+          } finally {
+            setProductsLoading(false);
+          }
+        } catch (error) {
+          // Token is invalid or expired, remove it
+          await AsyncStorage.removeItem("authToken");
+        }
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { user, token } = await login(email, password);
+      setUser(user);
+      setEmail("");
+      setPassword("");
+      // load user's products after login
+      try {
+        setProductsLoading(true);
+        const list = await getProductsByUserId(String(user.id));
+        setProducts(list);
+      } catch (e) {
+        console.warn('Failed to load user products', e);
+      } finally {
+        setProductsLoading(false);
+      }
+    } catch (error) {
+      const err = error as any;
+      Alert.alert(
+        "Erro no Login",
+        err.message || "Não foi possível fazer login"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("authToken");
+    setUser(null);
+  };
+
+  if (!user) {
+    return (
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.loginContainer}
+      >
+        <View style={styles.loginContent} color="background">
+          {/* Logo/Icon */}
+          <View style={styles.logoContainer} color="background">
+            <Text style={styles.logoText}>🛒</Text>
+            <Text type="title" style={styles.loginTitle}>
+              Marketplace
+            </Text>
+          </View>
+
+          {/* Welcome Message */}
+          <View style={styles.welcomeContainer} color="background">
+            <Text type="subtitle" style={styles.welcomeTitle}>
+              Bem-vindo de volta!
+            </Text>
+            <Text color="textSecondary" style={styles.welcomeSubtitle}>
+              Faça login para continuar
+            </Text>
+          </View>
+
+          {/* Login Form */}
+          <View style={styles.formContainer} color="background">
+            <View style={styles.inputContainer} color="background">
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.backgroundSecondary,
+                    color: colors.text,
+                    borderColor: colors.border,
+                  },
+                ]}
+                placeholder="seu@email.com"
+                placeholderTextColor={colors.textSecondary}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                editable={!loading}
+              />
+            </View>
+
+            <View style={styles.inputContainer} color="background">
+              <Text style={styles.inputLabel}>Senha</Text>
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: colors.backgroundSecondary,
+                    color: colors.text,
+                    borderColor: colors.border,
+                  },
+                ]}
+                placeholder="••••••••"
+                placeholderTextColor={colors.textSecondary}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                editable={!loading}
+              />
+            </View>
+
+            <Button
+              title={loading ? "Entrando..." : "Fazer Login"}
+              onPress={handleLogin}
+              disabled={loading}
+              style={styles.loginButton}
+            />
+
+            {loading && (
+              <View style={styles.loadingContainer} color="background">
+                <ActivityIndicator size="small" color={colors.primary} />
+              </View>
+            )}
+          </View>
+
+          {/* Footer */}
+          <View style={styles.footerContainer} color="background">
+            <Text color="textSecondary" style={styles.footerText}>
+              Ainda não tem uma conta?
+            </Text>
+            <Text style={[styles.footerLink, { color: colors.primary }]}>
+              Cadastre-se
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header} color="background">
-        <Avatar name="João Silva" size={80} />
+        <Avatar name={user.name} size={80} />
         <Text type="title" style={styles.name}>
-          João Silva
+          {user.name}
         </Text>
-        <Text color="textSecondary">joao.silva@email.com</Text>
+        <Text color="textSecondary">{user.email}</Text>
       </View>
+
+        {/* Seus Produtos */}
+        <View style={styles.section} color="background">
+          <Text type="subtitle" style={styles.sectionTitle}>
+            Seus Produtos
+          </Text>
+
+          {productsLoading ? (
+            <View style={{ paddingVertical: 12 }}>
+              <ActivityIndicator size="small" color={colors.primary} />
+            </View>
+          ) : products.length === 0 ? (
+            <Card style={{ padding: 16 }}>
+              <Text>Você ainda não anunciou produtos.</Text>
+              <Button title="Anunciar produto" onPress={() => {}} />
+            </Card>
+          ) : (
+            <FlatList
+              data={products}
+              keyExtractor={(item) => item.id}
+              horizontal={false}
+              numColumns={2}
+              columnWrapperStyle={{ justifyContent: 'space-between' }}
+              renderItem={({ item }) => (
+                <ProductCard
+                  product={item}
+                  onPress={(p) => router.push(`/product/${p.id}` as any)}
+                />
+              )}
+              ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            />
+          )}
+        </View>
 
       {/* Settings */}
       <View style={styles.section} color="background">
@@ -30,20 +244,6 @@ export default function ProfileScreen() {
             <Switch
               value={colorScheme === "dark"}
               onValueChange={toggleTheme}
-              trackColor={{
-                false: colors.backgroundTertiary,
-                true: colors.primary,
-              }}
-              thumbColor="#FFFFFF"
-            />
-          </View>
-        </Card>
-
-        <Card style={styles.settingCard}>
-          <View style={styles.settingRow} color="card">
-            <Text>Notificações</Text>
-            <Switch
-              value={false}
               trackColor={{
                 false: colors.backgroundTertiary,
                 true: colors.primary,
@@ -74,7 +274,7 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section} color="background">
-        <Button title="Sair" variant="outline" />
+        <Button title="Sair" variant="outline" onPress={handleLogout} />
       </View>
     </ScrollView>
   );
@@ -83,6 +283,81 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loginContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 40,
+  },
+  loginContent: {
+    width: "100%",
+    maxWidth: 400,
+    alignSelf: "center",
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  logoText: {
+    fontSize: 64,
+    marginBottom: 8,
+  },
+  loginTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+  },
+  welcomeContainer: {
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  welcomeTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  welcomeSubtitle: {
+    fontSize: 16,
+  },
+  formContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  inputContainer: {
+    gap: 8,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 4,
+  },
+  input: {
+    height: 50,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    borderWidth: 1,
+  },
+  loginButton: {
+    marginTop: 8,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    marginTop: 16,
+  },
+  footerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 24,
+  },
+  footerText: {
+    fontSize: 14,
+  },
+  footerLink: {
+    fontSize: 14,
+    fontWeight: "600",
   },
   header: {
     alignItems: "center",
