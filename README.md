@@ -1,6 +1,6 @@
-# 🛍️ Front Marketplace
+# 🛍️ Marketplace App
 
-Aplicativo de marketplace desenvolvido com React Native, Expo e TypeScript, com foco em **componentes reutilizáveis** e **cores parametrizáveis**.
+Aplicativo de marketplace desenvolvido com React Native, Expo e TypeScript, com foco em **componentes reutilizáveis** e **integração com API REST**.
 
 ## 📋 Índice
 
@@ -8,6 +8,7 @@ Aplicativo de marketplace desenvolvido com React Native, Expo e TypeScript, com 
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Instalação](#-instalação)
 - [Execução](#-execução)
+- [Integração com API](#-integração-com-api)
 - [Personalização de Cores](#-personalização-de-cores)
 - [Componentes](#-componentes)
 - [Tecnologias](#-tecnologias)
@@ -15,17 +16,19 @@ Aplicativo de marketplace desenvolvido com React Native, Expo e TypeScript, com 
 ## ✨ Características
 
 - ✅ **Sistema de temas** (Light/Dark mode)
+- ✅ **Integração com API REST** backend
+- ✅ **Autenticação JWT** com AsyncStorage
 - ✅ **Cores parametrizáveis** em um único arquivo
 - ✅ **Componentes reutilizáveis** para UI
 - ✅ **Navegação com tabs** e rotas dinâmicas
 - ✅ **TypeScript** para type-safety
 - ✅ **Layout responsivo**
-- ✅ **Componentes específicos** de marketplace
+- ✅ **React Query** para cache e gerenciamento de estado
 
 ## 📁 Estrutura do Projeto
 
 ```
-frontmarketplace/
+projeto/
 ├── app/                          # Rotas do aplicativo (Expo Router)
 │   ├── (tabs)/                   # Navegação em tabs
 │   │   ├── index.tsx             # Home/Feed de produtos
@@ -53,8 +56,14 @@ frontmarketplace/
 │   │
 │   └── Themed.tsx                # Componentes nativos com tema
 │
+├── services/                     # Camada de serviços (API)
+│   ├── auth.ts                   # Autenticação (login, signup)
+│   ├── products.ts               # Produtos (listar, buscar)
+│   ├── product.ts                # Produto individual e reviews
+│   └── categories.ts             # Categorias
+│
 ├── constants/
-│   └── Colors.ts                 # ⭐ CORES PARAMETRIZÁVEIS (altere aqui!)
+│   └── Colors.ts                 # ⭐ CORES PARAMETRIZÁVEIS
 │
 ├── context/
 │   └── ThemeContext.tsx          # Context para gerenciamento de tema
@@ -65,28 +74,46 @@ frontmarketplace/
 ├── types/
 │   └── index.ts                  # Definições de tipos TypeScript
 │
-├── data/
-│   └── mockData.ts               # Dados mockados para desenvolvimento
-│
+├── .env                          # Variáveis de ambiente (não versionado)
 ├── app.json                      # Configuração do Expo
 ├── package.json                  # Dependências
-├── tsconfig.json                 # Configuração TypeScript
-└── babel.config.js               # Configuração Babel
+└── tsconfig.json                 # Configuração TypeScript
 ```
 
 ## 🚀 Instalação
 
-```powershell
-# Navegar para a pasta do projeto
-cd "c:/Users/vitor/OneDrive/Desktop/Projeto facul/frontmarketplace/frontmarketplace"
+```bash
+# Clonar o repositório
+git clone <seu-repositorio>
+cd <pasta-do-projeto>
 
-# Instalar dependências (se necessário)
+# Instalar dependências
 npm install
+```
+
+## ⚙️ Configuração
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+EXPO_PUBLIC_API_URL=https://sua-api.com/api
+```
+
+Ou configure diretamente em `app.json`:
+
+```json
+{
+  "expo": {
+    "extra": {
+      "baseUrl": "https://sua-api.com/api"
+    }
+  }
+}
 ```
 
 ## ▶️ Execução
 
-```powershell
+```bash
 # Iniciar o Expo
 npm start
 
@@ -94,6 +121,82 @@ npm start
 npm run android   # Android
 npm run ios       # iOS (requer macOS)
 npm run web       # Web
+```
+
+## 🔗 Integração com API
+
+### Endpoints Implementados
+
+#### Autenticação
+
+- `POST /auth/register` - Cadastro de usuário
+- `POST /auth/login` - Login (retorna token JWT)
+
+#### Produtos
+
+- `GET /products` - Listar produtos (com paginação)
+- `GET /products/:id` - Detalhes do produto
+- `GET /products/:id/reviews` - Reviews do produto
+- `GET /users/:id/products` - Produtos do usuário
+
+#### Categorias
+
+- `GET /categories` - Listar categorias
+
+### Autenticação
+
+O app utiliza **JWT Bearer Token** armazenado em `AsyncStorage`:
+
+```typescript
+// Exemplo de requisição autenticada
+const token = await AsyncStorage.getItem("authToken");
+const response = await axios.get(`${BASE_URL}/endpoint`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+```
+
+### Estrutura de Dados
+
+#### Product
+
+```typescript
+{
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+  rating: number;
+  reviewsCount: number;
+}
+```
+
+#### Category
+
+```typescript
+{
+  id: string;
+  name: string;
+  icon: string;
+  productCount: number;
+}
+```
+
+#### Review
+
+```typescript
+{
+  id: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+}
 ```
 
 ## 🎨 Personalização de Cores
@@ -247,32 +350,24 @@ import { View, Text, TextInput, ScrollView } from "@/components/Themed";
 
 ## 📱 Funcionalidades Implementadas
 
-- ✅ Listagem de produtos com grid responsivo
-- ✅ Categorias de produtos
-- ✅ Busca de produtos
+- ✅ Autenticação JWT (login/signup)
+- ✅ Listagem de produtos com API REST
+- ✅ Categorias dinâmicas da API
+- ✅ Busca de produtos com filtros
 - ✅ Detalhes do produto
-- ✅ Sistema de avaliações (rating)
-- ✅ Descontos e preços promocionais
-- ✅ Carrinho de compras (estrutura)
-- ✅ Perfil do usuário
+- ✅ Sistema de reviews com usuários
+- ✅ Perfil do usuário com "Seus Produtos"
 - ✅ Modo claro/escuro
 - ✅ Navegação por tabs
+- ✅ React Query para cache e estado
 
-## 🎯 Próximos Passos Sugeridos
+## 🎯 Roadmap
 
-- [ ] Implementar Context para carrinho de compras
-- [ ] Adicionar autenticação (login/signup)
-- [ ] Integrar com API backend
-- [ ] Adicionar filtros de busca
-- [ ] Implementar favoritos
-- [ ] Adicionar animações
-- [ ] Testes unitários
+- [ ] Filtros por preço e categoria
+- [ ] Infinite scroll / paginação
+- [ ] Pull-to-refresh
+- [ ] Carrinho de compras funcional
+- [ ] Sistema de favoritos
+- [ ] Notificações push
+- [ ] Testes unitários e E2E
 - [ ] Integração com gateway de pagamento
-
-## 📄 Licença
-
-Este projeto foi criado para fins educacionais.
-
----
-
-**Desenvolvido com ❤️ usando React Native + Expo**
