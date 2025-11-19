@@ -3,6 +3,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from "react";
 
 export {
@@ -42,20 +43,24 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const queryClient = new QueryClient();
+
   return (
-    <ThemeProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="product/[id]" options={{ title: "Produto" }} />
-        <Stack.Screen name="search" options={{ title: "Buscar" }} />
-        <Stack.Screen
-          name="modal"
-          options={{
-            presentation: "modal",
-            title: "Modal",
-          }}
-        />
-      </Stack>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="product/[id]" options={{ title: "Produto" }} />
+          <Stack.Screen name="search" options={{ title: "Buscar" }} />
+          <Stack.Screen
+            name="modal"
+            options={{
+              presentation: "modal",
+              title: "Modal",
+            }}
+          />
+        </Stack>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

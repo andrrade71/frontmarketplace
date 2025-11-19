@@ -29,7 +29,6 @@ export function SearchBar({
   return (
     <View style={styles.container} color="background">
       <View style={styles.searchContainer} color="background">
-        <Text style={styles.icon}>🔍</Text>
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -57,9 +56,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  icon: {
-    fontSize: 18,
   },
   input: {
     flex: 1,

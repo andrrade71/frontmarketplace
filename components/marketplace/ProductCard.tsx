@@ -37,7 +37,11 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
       >
         {/* Image */}
         <View style={styles.imageContainer}>
-          <Image source={{ uri: product.image }} style={styles.image} />
+          <Image
+            source={{ uri: product.image }}
+            style={[styles.image, { backgroundColor: colors.backgroundTertiary }]}
+            resizeMode="contain"
+          />
           {product.discount && (
             <View style={styles.discountBadge}>
               <Badge
@@ -104,11 +108,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: CARD_WIDTH,
     position: "relative",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
+    width: "90%",
+    height: "90%",
+    borderRadius: 8,
   },
   discountBadge: {
     position: "absolute",
