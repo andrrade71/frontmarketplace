@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { View, Text, TextInput } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
+import { Text, TextInput, View } from "@/components/Themed";
+import { useTheme } from "@/context/ThemeContext";
+import React, { useState } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 export type SearchBarProps = {
   placeholder?: string;
@@ -9,13 +9,13 @@ export type SearchBarProps = {
   onChangeText?: (text: string) => void;
 };
 
-export function SearchBar({ 
-  placeholder = 'Buscar produtos...', 
+export function SearchBar({
+  placeholder = "Buscar produtos...",
   onSearch,
-  onChangeText 
+  onChangeText,
 }: SearchBarProps) {
   const { colors } = useTheme();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   const handleChangeText = (text: string) => {
     setQuery(text);
@@ -39,7 +39,7 @@ export function SearchBar({
           returnKeyType="search"
         />
         {query.length > 0 && (
-          <TouchableOpacity onPress={() => handleChangeText('')}>
+          <TouchableOpacity onPress={() => handleChangeText("")}>
             <Text style={styles.clearIcon}>✕</Text>
           </TouchableOpacity>
         )}
@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   icon: {

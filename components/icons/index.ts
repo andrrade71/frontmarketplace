@@ -1,6 +1,6 @@
-export { IPhoneIcon } from './IPhoneIcon';
-export { ShirtIcon } from './ShirtIcon';
-export { HomeIcon } from './HomeIcon';
-export { FootballIcon } from './FootballIcon';
-export { BooksIcon } from './BooksIcon';
-export { LipstickIcon } from './LipstickIcon';
+export { BooksIcon } from "./BooksIcon";
+export { FootballIcon } from "./FootballIcon";
+export { HomeIcon } from "./HomeIcon";
+export { IPhoneIcon } from "./IPhoneIcon";
+export { LipstickIcon } from "./LipstickIcon";
+export { ShirtIcon } from "./ShirtIcon";

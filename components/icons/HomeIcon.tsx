@@ -1,9 +1,20 @@
-import * as React from 'react';
-import Svg, { Path, SvgProps } from 'react-native-svg';
+import * as React from "react";
+import Svg, { Path, SvgProps } from "react-native-svg";
 
-export function HomeIcon({ width = 32, height = 32, color = '#000000', ...props }: SvgProps) {
+export function HomeIcon({
+  width = 32,
+  height = 32,
+  color = "#000000",
+  ...props
+}: SvgProps) {
   return (
-    <Svg width={width} height={height} viewBox="0 0 16 16" fill="none" {...props}>
+    <Svg
+      width={width}
+      height={height}
+      viewBox="0 0 16 16"
+      fill="none"
+      {...props}
+    >
       <Path
         fillRule="evenodd"
         clipRule="evenodd"

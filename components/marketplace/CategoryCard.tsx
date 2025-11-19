@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { View, Text } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
-import { Category } from '@/types';
+import { Text, View } from "@/components/Themed";
+import { useTheme } from "@/context/ThemeContext";
+import { Category } from "@/types";
+import React from "react";
+import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 64) / 3; // 3 cards por linha
 
 export type CategoryCardProps = {
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     padding: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     height: 100,
     gap: 4,
   },
@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
   },
   count: {
     fontSize: 10,

@@ -1,31 +1,36 @@
-import React from 'react';
-import { StyleSheet, ViewProps } from 'react-native';
-import { View, Text } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
-import { ColorName } from '@/constants/Colors';
+import { Text, View } from "@/components/Themed";
+import { useTheme } from "@/context/ThemeContext";
+import React from "react";
+import { StyleSheet, ViewProps } from "react-native";
 
 export type BadgeProps = ViewProps & {
   label: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
-  size?: 'small' | 'medium';
+  variant?: "primary" | "secondary" | "success" | "warning" | "error" | "info";
+  size?: "small" | "medium";
 };
 
-export function Badge({ label, variant = 'primary', size = 'medium', style, ...props }: BadgeProps) {
+export function Badge({
+  label,
+  variant = "primary",
+  size = "medium",
+  style,
+  ...props
+}: BadgeProps) {
   const { colors } = useTheme();
 
   const getBackgroundColor = () => {
     switch (variant) {
-      case 'primary':
+      case "primary":
         return colors.primary;
-      case 'secondary':
+      case "secondary":
         return colors.secondary;
-      case 'success':
+      case "success":
         return colors.success;
-      case 'warning':
+      case "warning":
         return colors.warning;
-      case 'error':
+      case "error":
         return colors.error;
-      case 'info':
+      case "info":
         return colors.info;
       default:
         return colors.primary;
@@ -33,7 +38,7 @@ export function Badge({ label, variant = 'primary', size = 'medium', style, ...p
   };
 
   const getSizeStyles = () => {
-    return size === 'small'
+    return size === "small"
       ? { paddingVertical: 2, paddingHorizontal: 8, fontSize: 12 }
       : { paddingVertical: 4, paddingHorizontal: 10, fontSize: 14 };
   };
@@ -63,10 +68,10 @@ export function Badge({ label, variant = 'primary', size = 'medium', style, ...p
 const styles = StyleSheet.create({
   badge: {
     borderRadius: 12,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   label: {
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
 });

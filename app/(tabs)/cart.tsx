@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { View, Text, ScrollView } from '@/components/Themed';
-import { Button } from '@/components/ui';
+import { ScrollView, Text, View } from "@/components/Themed";
+import { Button } from "@/components/ui";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 export default function CartScreen() {
   return (
@@ -14,10 +14,7 @@ export default function CartScreen() {
         <Text color="textSecondary" style={styles.emptyDescription}>
           Adicione produtos ao carrinho para vê-los aqui
         </Text>
-        <Button
-          title="Explorar Produtos"
-          style={styles.button}
-        />
+        <Button title="Explorar Produtos" style={styles.button} />
       </View>
     </ScrollView>
   );
@@ -29,12 +26,12 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   emptyState: {
-    alignItems: 'center',
+    alignItems: "center",
     maxWidth: 300,
   },
   emptyIcon: {
@@ -43,10 +40,10 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptyDescription: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 24,
   },
   button: {

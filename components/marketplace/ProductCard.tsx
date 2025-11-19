@@ -1,11 +1,11 @@
-import React from 'react';
-import { StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { View, Text } from '@/components/Themed';
-import { Badge } from '@/components/ui';
-import { useTheme } from '@/context/ThemeContext';
-import { Product } from '@/types';
+import { Text, View } from "@/components/Themed";
+import { Badge } from "@/components/ui";
+import { useTheme } from "@/context/ThemeContext";
+import { Product } from "@/types";
+import React from "react";
+import { Dimensions, Image, StyleSheet, TouchableOpacity } from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 48) / 2; // 2 cards por linha com gap de 16
 
 export type ProductCardProps = {
@@ -17,7 +17,7 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
   const { colors } = useTheme();
 
   const formatPrice = (price: number) => {
-    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+    return `R$ ${price.toFixed(2).replace(".", ",")}`;
   };
 
   return (
@@ -40,7 +40,11 @@ export function ProductCard({ product, onPress }: ProductCardProps) {
           <Image source={{ uri: product.image }} style={styles.image} />
           {product.discount && (
             <View style={styles.discountBadge}>
-              <Badge label={`-${product.discount}%`} variant="error" size="small" />
+              <Badge
+                label={`-${product.discount}%`}
+                variant="error"
+                size="small"
+              />
             </View>
           )}
         </View>
@@ -86,8 +90,8 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
     borderWidth: 1,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -97,17 +101,17 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   imageContainer: {
-    width: '100%',
+    width: "100%",
     height: CARD_WIDTH,
-    position: 'relative',
+    position: "relative",
   },
   image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
   discountBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 8,
   },
@@ -116,13 +120,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 4,
     minHeight: 36,
   },
   rating: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
   ratingText: {
@@ -133,15 +137,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   priceContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
     gap: 2,
   },
   originalPrice: {
     fontSize: 12,
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
   },
   price: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

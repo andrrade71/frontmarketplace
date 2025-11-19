@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
-import { useRouter } from 'expo-router';
-import { View, Text, ScrollView } from '@/components/Themed';
-import { SearchBar, ProductCard, CategoryCard } from '@/components/marketplace';
-import { mockProducts, mockCategories } from '@/data/mockData';
-import { Product, Category } from '@/types';
+import { ScrollView, Text, View } from "@/components/Themed";
+import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
+import { mockCategories, mockProducts } from "@/data/mockData";
+import { Category, Product } from "@/types";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -21,7 +21,9 @@ export default function HomeScreen() {
     router.push(`/search?q=${query}`);
   };
 
-  const featuredProducts = mockProducts.filter((p) => p.discount && p.discount > 0);
+  const featuredProducts = mockProducts.filter(
+    (p) => p.discount && p.discount > 0
+  );
 
   return (
     <ScrollView style={styles.container}>
@@ -91,13 +93,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   categoriesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
   productsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
 });

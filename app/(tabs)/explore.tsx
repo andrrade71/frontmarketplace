@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { View, Text, ScrollView } from '@/components/Themed';
-import { SearchBar, ProductCard } from '@/components/marketplace';
-import { mockProducts, mockCategories } from '@/data/mockData';
-import { useRouter } from 'expo-router';
-import { Product } from '@/types';
+import { ScrollView, Text, View } from "@/components/Themed";
+import { ProductCard, SearchBar } from "@/components/marketplace";
+import { mockCategories, mockProducts } from "@/data/mockData";
+import { Product } from "@/types";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 export default function ExploreScreen() {
   const router = useRouter();
@@ -22,7 +22,11 @@ export default function ExploreScreen() {
           Explorar por Categoria
         </Text>
         {mockCategories.map((category) => (
-          <View key={category.id} style={styles.categorySection} color="background">
+          <View
+            key={category.id}
+            style={styles.categorySection}
+            color="background"
+          >
             <Text type="default" style={styles.categoryTitle}>
               {category.icon} {category.name}
             </Text>
@@ -61,12 +65,12 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
   },
   productsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
 });

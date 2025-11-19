@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, ViewProps, TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import { View } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
+import { View } from "@/components/Themed";
+import { useTheme } from "@/context/ThemeContext";
+import React from "react";
+import { StyleSheet, TouchableOpacity, ViewProps } from "react-native";
 
 export type CardProps = ViewProps & {
   pressable?: boolean;
@@ -9,7 +9,14 @@ export type CardProps = ViewProps & {
   elevated?: boolean;
 };
 
-export function Card({ style, pressable, onPress, elevated = true, children, ...props }: CardProps) {
+export function Card({
+  style,
+  pressable,
+  onPress,
+  elevated = true,
+  children,
+  ...props
+}: CardProps) {
   const { colors } = useTheme();
 
   const cardContent = (
@@ -47,7 +54,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   elevated: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,

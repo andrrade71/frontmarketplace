@@ -1,5 +1,5 @@
-export { Button } from './Button';
-export { Card } from './Card';
-export { Badge } from './Badge';
-export { Avatar } from './Avatar';
-export { Loading } from './Loading';
+export { Avatar } from "./Avatar";
+export { Badge } from "./Badge";
+export { Button } from "./Button";
+export { Card } from "./Card";
+export { Loading } from "./Loading";

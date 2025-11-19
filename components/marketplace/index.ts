@@ -1,3 +1,3 @@
-export { ProductCard } from './ProductCard';
-export { CategoryCard } from './CategoryCard';
-export { SearchBar } from './SearchBar';
+export { CategoryCard } from "./CategoryCard";
+export { ProductCard } from "./ProductCard";
+export { SearchBar } from "./SearchBar";

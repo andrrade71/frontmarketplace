@@ -1,14 +1,14 @@
-import React from 'react';
-import { StyleSheet, ActivityIndicator } from 'react-native';
-import { View, Text } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
+import { Text, View } from "@/components/Themed";
+import { useTheme } from "@/context/ThemeContext";
+import React from "react";
+import { ActivityIndicator, StyleSheet } from "react-native";
 
 export type LoadingProps = {
   message?: string;
-  size?: 'small' | 'large';
+  size?: "small" | "large";
 };
 
-export function Loading({ message, size = 'large' }: LoadingProps) {
+export function Loading({ message, size = "large" }: LoadingProps) {
   const { colors } = useTheme();
 
   return (
@@ -26,8 +26,8 @@ export function Loading({ message, size = 'large' }: LoadingProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   message: {

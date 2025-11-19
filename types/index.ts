@@ -1,5 +1,5 @@
-import { ComponentType } from 'react';
-import { SvgProps } from 'react-native-svg';
+import { ComponentType } from "react";
+import { SvgProps } from "react-native-svg";
 
 export type Product = {
   id: string;
@@ -57,7 +57,7 @@ export type Order = {
   userId: string;
   items: CartItem[];
   total: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   createdAt: Date;
   address: Address;
 };

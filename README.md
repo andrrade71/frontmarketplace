@@ -110,39 +110,39 @@ Todas as cores do aplicativo estão centralizadas em **um único arquivo**: `con
 export const Colors = {
   light: {
     // ⬇️ Altere estas cores para personalizar o app!
-    primary: '#007AFF',        // Cor principal (botões, links)
-    secondary: '#5856D6',      // Cor secundária
-    tertiary: '#FF9500',       // Cor terciária
-    
-    background: '#FFFFFF',     // Fundo da tela
-    card: '#FFFFFF',           // Fundo dos cards
-    
-    text: '#000000',           // Texto principal
-    textSecondary: '#6B7280',  // Texto secundário
-    
-    success: '#10B981',        // Verde (sucesso)
-    error: '#EF4444',          // Vermelho (erro)
-    warning: '#F59E0B',        // Amarelo (aviso)
-    
+    primary: "#007AFF", // Cor principal (botões, links)
+    secondary: "#5856D6", // Cor secundária
+    tertiary: "#FF9500", // Cor terciária
+
+    background: "#FFFFFF", // Fundo da tela
+    card: "#FFFFFF", // Fundo dos cards
+
+    text: "#000000", // Texto principal
+    textSecondary: "#6B7280", // Texto secundário
+
+    success: "#10B981", // Verde (sucesso)
+    error: "#EF4444", // Vermelho (erro)
+    warning: "#F59E0B", // Amarelo (aviso)
+
     // Cores específicas de marketplace
-    price: '#10B981',          // Preço
-    discount: '#EF4444',       // Desconto
-    rating: '#F59E0B',         // Estrelas de avaliação
+    price: "#10B981", // Preço
+    discount: "#EF4444", // Desconto
+    rating: "#F59E0B", // Estrelas de avaliação
   },
   dark: {
     // ... mesmas propriedades para o tema escuro
-  }
-}
+  },
+};
 ```
 
 ### Usar cores nos componentes
 
 ```typescript
-import { useTheme } from '@/context/ThemeContext';
+import { useTheme } from "@/context/ThemeContext";
 
 function MeuComponente() {
   const { colors } = useTheme();
-  
+
   return (
     <View style={{ backgroundColor: colors.background }}>
       <Text style={{ color: colors.text }}>Olá!</Text>
@@ -156,16 +156,18 @@ function MeuComponente() {
 ### Componentes UI Base
 
 #### `Button`
+
 ```tsx
-<Button 
+<Button
   title="Clique aqui"
-  variant="primary"    // primary | secondary | outline | ghost
-  size="medium"        // small | medium | large
+  variant="primary" // primary | secondary | outline | ghost
+  size="medium" // small | medium | large
   onPress={() => {}}
 />
 ```
 
 #### `Card`
+
 ```tsx
 <Card pressable onPress={() => {}}>
   <Text>Conteúdo do card</Text>
@@ -173,44 +175,46 @@ function MeuComponente() {
 ```
 
 #### `Badge`
+
 ```tsx
-<Badge 
+<Badge
   label="Novo"
-  variant="success"    // primary | secondary | success | warning | error | info
-  size="medium"        // small | medium
+  variant="success" // primary | secondary | success | warning | error | info
+  size="medium" // small | medium
 />
 ```
 
 #### `Avatar`
+
 ```tsx
-<Avatar 
+<Avatar
   name="João Silva"
   size={40}
-  source={{ uri: 'https://...' }}  // opcional
+  source={{ uri: "https://..." }} // opcional
 />
 ```
 
 ### Componentes de Marketplace
 
 #### `ProductCard`
+
 ```tsx
-<ProductCard 
-  product={product}
-  onPress={(product) => console.log(product)}
-/>
+<ProductCard product={product} onPress={(product) => console.log(product)} />
 ```
 
 #### `CategoryCard`
+
 ```tsx
-<CategoryCard 
+<CategoryCard
   category={category}
   onPress={(category) => console.log(category)}
 />
 ```
 
 #### `SearchBar`
+
 ```tsx
-<SearchBar 
+<SearchBar
   placeholder="Buscar produtos..."
   onSearch={(query) => console.log(query)}
 />
@@ -221,13 +225,15 @@ function MeuComponente() {
 Wrappers dos componentes nativos que respondem automaticamente ao tema:
 
 ```tsx
-import { View, Text, TextInput, ScrollView } from '@/components/Themed';
+import { View, Text, TextInput, ScrollView } from "@/components/Themed";
 
 <View color="background">
-  <Text type="title" color="text">Título</Text>
+  <Text type="title" color="text">
+    Título
+  </Text>
   <Text type="subtitle">Subtítulo</Text>
   <TextInput placeholder="Digite..." />
-</View>
+</View>;
 ```
 
 ## 🛠️ Tecnologias

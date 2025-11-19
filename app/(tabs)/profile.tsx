@@ -1,8 +1,8 @@
-import React from 'react';
-import { StyleSheet, Switch } from 'react-native';
-import { View, Text, ScrollView } from '@/components/Themed';
-import { Avatar, Card, Button } from '@/components/ui';
-import { useTheme } from '@/context/ThemeContext';
+import { ScrollView, Text, View } from "@/components/Themed";
+import { Avatar, Button, Card } from "@/components/ui";
+import { useTheme } from "@/context/ThemeContext";
+import React from "react";
+import { StyleSheet, Switch } from "react-native";
 
 export default function ProfileScreen() {
   const { colors, colorScheme, toggleTheme } = useTheme();
@@ -28,9 +28,12 @@ export default function ProfileScreen() {
           <View style={styles.settingRow} color="card">
             <Text>Modo Escuro</Text>
             <Switch
-              value={colorScheme === 'dark'}
+              value={colorScheme === "dark"}
               onValueChange={toggleTheme}
-              trackColor={{ false: colors.backgroundTertiary, true: colors.primary }}
+              trackColor={{
+                false: colors.backgroundTertiary,
+                true: colors.primary,
+              }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -41,7 +44,10 @@ export default function ProfileScreen() {
             <Text>Notificações</Text>
             <Switch
               value={false}
-              trackColor={{ false: colors.backgroundTertiary, true: colors.primary }}
+              trackColor={{
+                false: colors.backgroundTertiary,
+                true: colors.primary,
+              }}
               thumbColor="#FFFFFF"
             />
           </View>
@@ -68,10 +74,7 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.section} color="background">
-        <Button
-          title="Sair"
-          variant="outline"
-        />
+        <Button title="Sair" variant="outline" />
       </View>
     </ScrollView>
   );
@@ -82,7 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 24,
     gap: 8,
   },
@@ -100,9 +103,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   menuCard: {
     marginBottom: 12,

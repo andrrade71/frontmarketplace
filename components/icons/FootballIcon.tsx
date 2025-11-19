@@ -1,7 +1,12 @@
-import * as React from 'react';
-import Svg, { Path, SvgProps } from 'react-native-svg';
+import * as React from "react";
+import Svg, { Path, SvgProps } from "react-native-svg";
 
-export function FootballIcon({ width = 32, height = 32, color = '#000000', ...props }: SvgProps) {
+export function FootballIcon({
+  width = 32,
+  height = 32,
+  color = "#000000",
+  ...props
+}: SvgProps) {
   return (
     <Svg width={width} height={height} viewBox="0 0 122.88 122.88" {...props}>
       <Path

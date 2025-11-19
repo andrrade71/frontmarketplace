@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, Image, ImageProps } from 'react-native';
-import { View, Text } from '@/components/Themed';
-import { useTheme } from '@/context/ThemeContext';
+import { Text, View } from "@/components/Themed";
+import { useTheme } from "@/context/ThemeContext";
+import React from "react";
+import { Image, ImageProps, StyleSheet } from "react-native";
 
 export type AvatarProps = {
-  source?: ImageProps['source'];
+  source?: ImageProps["source"];
   name?: string;
   size?: number;
 };
@@ -13,7 +13,7 @@ export function Avatar({ source, name, size = 40 }: AvatarProps) {
   const { colors } = useTheme();
 
   const getInitials = (name: string) => {
-    const parts = name.trim().split(' ');
+    const parts = name.trim().split(" ");
     if (parts.length >= 2) {
       return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
     }
@@ -50,7 +50,7 @@ export function Avatar({ source, name, size = 40 }: AvatarProps) {
       ]}
     >
       <Text style={[styles.initials, { fontSize: size / 2.5 }]}>
-        {name ? getInitials(name) : '?'}
+        {name ? getInitials(name) : "?"}
       </Text>
     </View>
   );
@@ -58,14 +58,14 @@ export function Avatar({ source, name, size = 40 }: AvatarProps) {
 
 const styles = StyleSheet.create({
   avatar: {
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   placeholder: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   initials: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
 });

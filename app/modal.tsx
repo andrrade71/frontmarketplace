@@ -1,6 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { View, Text } from '@/components/Themed';
-import { Button } from '@/components/ui';
+import { Text, View } from "@/components/Themed";
+import { StyleSheet } from "react-native";
 
 export default function ModalScreen() {
   return (
@@ -14,8 +13,8 @@ export default function ModalScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
 });

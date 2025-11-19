@@ -1,10 +1,10 @@
-import React from 'react';
-import { StyleSheet, Image, ScrollView } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text } from '@/components/Themed';
-import { Button, Badge } from '@/components/ui';
-import { mockProducts } from '@/data/mockData';
-import { useTheme } from '@/context/ThemeContext';
+import { Text, View } from "@/components/Themed";
+import { Badge, Button } from "@/components/ui";
+import { useTheme } from "@/context/ThemeContext";
+import { mockProducts } from "@/data/mockData";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
+import { Image, ScrollView, StyleSheet } from "react-native";
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,7 +22,7 @@ export default function ProductDetailScreen() {
   }
 
   const formatPrice = (price: number) => {
-    return `R$ ${price.toFixed(2).replace('.', ',')}`;
+    return `R$ ${price.toFixed(2).replace(".", ",")}`;
   };
 
   return (
@@ -75,8 +75,8 @@ export default function ProductDetailScreen() {
         {/* Stock Status */}
         <View style={styles.section} color="background">
           <Badge
-            label={product.inStock ? 'Em estoque' : 'Indisponível'}
-            variant={product.inStock ? 'success' : 'error'}
+            label={product.inStock ? "Em estoque" : "Indisponível"}
+            variant={product.inStock ? "success" : "error"}
           />
         </View>
 
@@ -104,9 +104,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 400,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   content: {
     padding: 16,
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   rating: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
     gap: 4,
   },
@@ -131,12 +131,12 @@ const styles = StyleSheet.create({
   },
   originalPrice: {
     fontSize: 14,
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
     marginBottom: 4,
   },
   price: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   section: {
     marginBottom: 24,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginTop: 8,
   },

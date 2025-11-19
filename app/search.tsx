@@ -1,13 +1,16 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, Text, ScrollView } from '@/components/Themed';
-import { SearchBar, ProductCard } from '@/components/marketplace';
-import { mockProducts } from '@/data/mockData';
-import { Product } from '@/types';
+import { ScrollView, Text, View } from "@/components/Themed";
+import { ProductCard, SearchBar } from "@/components/marketplace";
+import { mockProducts } from "@/data/mockData";
+import { Product } from "@/types";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 export default function SearchScreen() {
-  const { q, category } = useLocalSearchParams<{ q?: string; category?: string }>();
+  const { q, category } = useLocalSearchParams<{
+    q?: string;
+    category?: string;
+  }>();
   const router = useRouter();
 
   const handleProductPress = (product: Product) => {
@@ -36,7 +39,7 @@ export default function SearchScreen() {
 
       <View style={styles.section} color="background">
         <Text type="subtitle" style={styles.sectionTitle}>
-          {q ? `Resultados para "${q}"` : 'Todos os produtos'}
+          {q ? `Resultados para "${q}"` : "Todos os produtos"}
         </Text>
         <Text color="textSecondary" style={styles.count}>
           {filteredProducts.length} produtos encontrados
@@ -81,12 +84,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   productsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
   empty: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 60,
   },
   emptyIcon: {
