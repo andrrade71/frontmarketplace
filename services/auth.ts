@@ -1,6 +1,6 @@
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from 'expo-constants';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import Constants from "expo-constants";
 
 const BASE_URL = Constants.expoConfig?.extra?.baseUrl;
 
@@ -20,12 +20,12 @@ export async function login(email: string, password: string) {
     const { token, user } = response.data.data;
 
     // Store the token in AsyncStorage
-    await AsyncStorage.setItem('authToken', token);
+    await AsyncStorage.setItem("authToken", token);
 
     return { user, token };
   } catch (error: any) {
-    console.error('Login failed:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Failed to login');
+    console.error("Login failed:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Failed to login");
   }
 }
 
@@ -35,10 +35,10 @@ export async function login(email: string, password: string) {
  */
 export async function getUserProfile() {
   try {
-    const token = await AsyncStorage.getItem('authToken');
-    
+    const token = await AsyncStorage.getItem("authToken");
+
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     const response = await axios.get(`${BASE_URL}/users/profile`, {
@@ -49,7 +49,12 @@ export async function getUserProfile() {
 
     return response.data.data;
   } catch (error: any) {
-    console.error('Failed to fetch user profile:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Failed to fetch user profile');
+    console.error(
+      "Failed to fetch user profile:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch user profile"
+    );
   }
 }

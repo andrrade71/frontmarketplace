@@ -1,17 +1,17 @@
+import { ProductCard } from "@/components/marketplace/ProductCard";
 import { ScrollView, Text, View } from "@/components/Themed";
 import { Avatar, Button, Card } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
 import { getUserProfile, login } from "@/services/auth";
 import { getProductsByUserId } from "@/services/products";
-import { User, Product } from "@/types";
-import { ProductCard } from "@/components/marketplace/ProductCard";
-import { FlatList } from "react-native";
-import { useRouter } from "expo-router";
+import { Product, User } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   StyleSheet,
   Switch,
   TextInput,
@@ -41,7 +41,7 @@ export default function ProfileScreen() {
             const list = await getProductsByUserId(String(userData.id));
             setProducts(list);
           } catch (e) {
-            console.warn('Failed to load user products', e);
+            console.warn("Failed to load user products", e);
           } finally {
             setProductsLoading(false);
           }
@@ -72,7 +72,7 @@ export default function ProfileScreen() {
         const list = await getProductsByUserId(String(user.id));
         setProducts(list);
       } catch (e) {
-        console.warn('Failed to load user products', e);
+        console.warn("Failed to load user products", e);
       } finally {
         setProductsLoading(false);
       }
@@ -199,38 +199,38 @@ export default function ProfileScreen() {
         <Text color="textSecondary">{user.email}</Text>
       </View>
 
-        {/* Seus Produtos */}
-        <View style={styles.section} color="background">
-          <Text type="subtitle" style={styles.sectionTitle}>
-            Seus Produtos
-          </Text>
+      {/* Seus Produtos */}
+      <View style={styles.section} color="background">
+        <Text type="subtitle" style={styles.sectionTitle}>
+          Seus Produtos
+        </Text>
 
-          {productsLoading ? (
-            <View style={{ paddingVertical: 12 }}>
-              <ActivityIndicator size="small" color={colors.primary} />
-            </View>
-          ) : products.length === 0 ? (
-            <Card style={{ padding: 16 }}>
-              <Text>Você ainda não anunciou produtos.</Text>
-              <Button title="Anunciar produto" onPress={() => {}} />
-            </Card>
-          ) : (
-            <FlatList
-              data={products}
-              keyExtractor={(item) => item.id}
-              horizontal={false}
-              numColumns={2}
-              columnWrapperStyle={{ justifyContent: 'space-between' }}
-              renderItem={({ item }) => (
-                <ProductCard
-                  product={item}
-                  onPress={(p) => router.push(`/product/${p.id}` as any)}
-                />
-              )}
-              ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-            />
-          )}
-        </View>
+        {productsLoading ? (
+          <View style={{ paddingVertical: 12 }}>
+            <ActivityIndicator size="small" color={colors.primary} />
+          </View>
+        ) : products.length === 0 ? (
+          <Card style={{ padding: 16 }}>
+            <Text>Você ainda não anunciou produtos.</Text>
+            <Button title="Anunciar produto" onPress={() => {}} />
+          </Card>
+        ) : (
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item.id}
+            horizontal={false}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
+            renderItem={({ item }) => (
+              <ProductCard
+                product={item}
+                onPress={(p) => router.push(`/product/${p.id}` as any)}
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+          />
+        )}
+      </View>
 
       {/* Settings */}
       <View style={styles.section} color="background">
