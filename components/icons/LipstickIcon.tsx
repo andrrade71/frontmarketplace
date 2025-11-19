@@ -8,5 +8,12 @@ export function LipstickIcon({
   size?: number;
   color?: string;
 }) {
-  return <MaterialCommunityIcons name="lipstick" size={size} color={color} {...props} />;
+  return (
+    <MaterialCommunityIcons
+      name="lipstick"
+      size={size}
+      color={color}
+      {...props}
+    />
+  );
 }

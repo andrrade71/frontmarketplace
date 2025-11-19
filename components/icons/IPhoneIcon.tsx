@@ -8,5 +8,7 @@ export function IPhoneIcon({
   size?: number;
   color?: string;
 }) {
-  return <Ionicons name="phone-portrait" size={size} color={color} {...props} />;
+  return (
+    <Ionicons name="phone-portrait" size={size} color={color} {...props} />
+  );
 }
