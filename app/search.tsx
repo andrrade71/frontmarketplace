@@ -1,11 +1,11 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { ProductCard, SearchBar } from "@/components/marketplace";
+import { useTheme } from "@/context/ThemeContext";
+import { getAllProductsPaginated } from "@/services/products";
 import { Product } from "@/types";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { getAllProductsPaginated } from "@/services/products";
-import { useTheme } from "@/context/ThemeContext";
 
 export default function SearchScreen() {
   const { q, category } = useLocalSearchParams<{
@@ -14,7 +14,7 @@ export default function SearchScreen() {
   }>();
   const router = useRouter();
   const { colors } = useTheme();
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +29,7 @@ export default function SearchScreen() {
         const filters: any = {};
         if (category) filters.categoryId = category;
         if (q) filters.search = q;
-        
+
         const { items } = await getAllProductsPaginated(1, 50, filters);
         setProducts(items);
       } catch (error) {
@@ -55,34 +55,34 @@ export default function SearchScreen() {
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
-      <View style={styles.section} color="background">
-        <Text type="subtitle" style={styles.sectionTitle}>
-          {q ? `Resultados para "${q}"` : "Todos os produtos"}
-        </Text>
-        <Text color="textSecondary" style={styles.count}>
-          {filteredProducts.length} produtos encontrados
-        </Text>
+        <View style={styles.section} color="background">
+          <Text type="subtitle" style={styles.sectionTitle}>
+            {q ? `Resultados para "${q}"` : "Todos os produtos"}
+          </Text>
+          <Text color="textSecondary" style={styles.count}>
+            {filteredProducts.length} produtos encontrados
+          </Text>
 
-        <View style={styles.productsGrid} color="background">
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onPress={handleProductPress}
-            />
-          ))}
-        </View>
-
-        {filteredProducts.length === 0 && (
-          <View style={styles.empty} color="background">
-            <Text style={styles.emptyIcon}>🔍</Text>
-            <Text type="subtitle">Nenhum produto encontrado</Text>
-            <Text color="textSecondary">
-              Tente buscar com outras palavras-chave
-            </Text>
+          <View style={styles.productsGrid} color="background">
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onPress={handleProductPress}
+              />
+            ))}
           </View>
-        )}
-      </View>
+
+          {filteredProducts.length === 0 && (
+            <View style={styles.empty} color="background">
+              <Text style={styles.emptyIcon}>🔍</Text>
+              <Text type="subtitle">Nenhum produto encontrado</Text>
+              <Text color="textSecondary">
+                Tente buscar com outras palavras-chave
+              </Text>
+            </View>
+          )}
+        </View>
       )}
     </ScrollView>
   );

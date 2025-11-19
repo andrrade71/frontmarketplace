@@ -1,24 +1,16 @@
 import { ScrollView, Text, View } from "@/components/Themed";
 import { ProductCard, SearchBar } from "@/components/marketplace";
-import { Product, Category } from "@/types";
+import { useTheme } from "@/context/ThemeContext";
+import { getAllProductsPaginated } from "@/services/products";
+import { Category, Product } from "@/types";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { getAllProductsPaginated } from "@/services/products";
-import { useTheme } from "@/context/ThemeContext";
-import {
-  BooksIcon,
-  FootballIcon,
-  HomeIcon,
-  IPhoneIcon,
-  LipstickIcon,
-  ShirtIcon,
-} from "@/components/icons";
 
 export default function ExploreScreen() {
   const router = useRouter();
   const { colors } = useTheme();
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -70,9 +62,9 @@ export default function ExploreScreen() {
           const categoryProducts = products.filter(
             (p) => p.categoryId === category.id
           );
-          
+
           if (categoryProducts.length === 0) return null;
-          
+
           return (
             <View
               key={category.id}

@@ -1,10 +1,10 @@
 import { Text, View } from "@/components/Themed";
 import { Badge, Button } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
+import { getProductById, ProductDetail } from "@/services/product";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet } from "react-native";
-import { getProductById, ProductDetail } from "@/services/product";
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,7 +18,7 @@ export default function ProductDetailScreen() {
   useEffect(() => {
     async function fetchProduct() {
       if (!id) return;
-      
+
       try {
         setLoading(true);
         setError(null);

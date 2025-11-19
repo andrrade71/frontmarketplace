@@ -1,13 +1,5 @@
 import { Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
-import {
-  BooksIcon,
-  FootballIcon,
-  HomeIcon,
-  IPhoneIcon,
-  LipstickIcon,
-  ShirtIcon,
-} from "@/components/icons";
 import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";

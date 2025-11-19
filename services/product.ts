@@ -1,7 +1,7 @@
+import { Product } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
-import { Product } from "@/types";
 
 const BASE_URL = Constants.expoConfig?.extra?.baseUrl;
 
@@ -58,7 +58,10 @@ export async function getProductById(id: string): Promise<ProductDetail> {
     if (error?.response?.status === 401) {
       await AsyncStorage.removeItem("authToken");
     }
-    console.error("getProductById error:", error.response?.data || error.message);
+    console.error(
+      "getProductById error:",
+      error.response?.data || error.message
+    );
     throw new Error(error.response?.data?.message || "Failed to fetch product");
   }
 }
