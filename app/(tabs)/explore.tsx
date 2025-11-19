@@ -2,6 +2,7 @@ import { ScrollView, Text, View } from "@/components/Themed";
 import { ProductCard, SearchBar } from "@/components/marketplace";
 import { useTheme } from "@/context/ThemeContext";
 import { getAllProductsPaginated } from "@/services/products";
+import { getCategories } from "@/services/categories";
 import { Category, Product } from "@/types";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -12,30 +13,26 @@ export default function ExploreScreen() {
   const { colors } = useTheme();
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const categories: Category[] = [
-    { id: "1", name: "Eletrônicos", icon: "iphone", productCount: 0 },
-    { id: "2", name: "Moda", icon: "shirt", productCount: 0 },
-    { id: "3", name: "Casa", icon: "home", productCount: 0 },
-    { id: "4", name: "Esportes", icon: "football", productCount: 0 },
-    { id: "5", name: "Livros", icon: "books", productCount: 0 },
-    { id: "6", name: "Beleza", icon: "lipstick", productCount: 0 },
-  ];
-
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
       try {
         setLoading(true);
-        const { items } = await getAllProductsPaginated(1, 100);
-        setProducts(items);
+        const [productsData, categoriesData] = await Promise.all([
+          getAllProductsPaginated(1, 100),
+          getCategories(),
+        ]);
+        setProducts(productsData.items);
+        setCategories(categoriesData);
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setLoading(false);
       }
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
   const handleProductPress = (product: Product) => {

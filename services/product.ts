@@ -12,6 +12,17 @@ export type ProductDetail = Product & {
   };
 };
 
+export type Review = {
+  id: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+  user: {
+    id: string;
+    username: string;
+  };
+};
+
 /**
  * Fetch a single product by ID.
  * @param id - Product ID
@@ -63,5 +74,45 @@ export async function getProductById(id: string): Promise<ProductDetail> {
       error.response?.data || error.message
     );
     throw new Error(error.response?.data?.message || "Failed to fetch product");
+  }
+}
+
+/**
+ * Fetch reviews for a specific product.
+ * @param productId - Product ID
+ * @returns Array of normalized reviews
+ */
+export async function getProductReviews(productId: string): Promise<Review[]> {
+  try {
+    const token = await AsyncStorage.getItem("authToken");
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+
+    const response = await axios.get(`${BASE_URL}/products/${productId}/reviews`, {
+      headers,
+    });
+
+    const apiReviews = response.data?.reviews || [];
+
+    const normalized: Review[] = apiReviews.map((r: any) => ({
+      id: String(r.id),
+      rating: r.rate || 0,
+      comment: r.comment || "",
+      createdAt: new Date(r.created_at),
+      user: {
+        id: String(r.users?.id || ""),
+        username: r.users?.username || "Anonymous",
+      },
+    }));
+
+    return normalized;
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      await AsyncStorage.removeItem("authToken");
+    }
+    console.error(
+      "getProductReviews error:",
+      error.response?.data || error.message
+    );
+    throw new Error(error.response?.data?.message || "Failed to fetch reviews");
   }
 }

@@ -1,6 +1,7 @@
 import { Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
 import { getAllProductsPaginated } from "@/services/products";
+import { getCategories } from "@/services/categories";
 import { Category, Product } from "@/types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -18,14 +19,13 @@ export default function HomeScreen() {
     router.push(`/search?category=${category.id}`);
   };
 
-  const categories: Category[] = [
-    { id: "1", name: "Eletrônicos", icon: "iphone", productCount: 0 },
-    { id: "2", name: "Moda", icon: "shirt", productCount: 0 },
-    { id: "3", name: "Casa", icon: "home", productCount: 0 },
-    { id: "4", name: "Esportes", icon: "football", productCount: 0 },
-    { id: "5", name: "Livros", icon: "books", productCount: 0 },
-    { id: "6", name: "Beleza", icon: "lipstick", productCount: 0 },
-  ];
+  // Fetch categories from API
+  const categoriesQuery = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
+
+  const categories = categoriesQuery.data || [];
 
   const onSearch = (query: string) => {
     router.push(`/search?q=${query}`);

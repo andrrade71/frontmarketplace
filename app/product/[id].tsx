@@ -1,7 +1,7 @@
 import { Text, View } from "@/components/Themed";
 import { Badge, Button } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
-import { getProductById, ProductDetail } from "@/services/product";
+import { getProductById, getProductReviews, ProductDetail, Review } from "@/services/product";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet } from "react-native";
@@ -12,7 +12,9 @@ export default function ProductDetailScreen() {
   const { colors } = useTheme();
 
   const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingReviews, setLoadingReviews] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,6 +26,18 @@ export default function ProductDetailScreen() {
         setError(null);
         const data = await getProductById(String(id));
         setProduct(data);
+        
+        // Fetch reviews
+        setLoadingReviews(true);
+        try {
+          const reviewsData = await getProductReviews(String(id));
+          setReviews(reviewsData);
+        } catch (reviewErr) {
+          console.error("Failed to load reviews:", reviewErr);
+          setReviews([]);
+        } finally {
+          setLoadingReviews(false);
+        }
       } catch (err: any) {
         setError(err.message || "Erro ao carregar produto");
         console.error("Failed to load product:", err);
@@ -111,6 +125,41 @@ export default function ProductDetailScreen() {
           />
         </View>
 
+        {/* Reviews */}
+        <View style={styles.section} color="background">
+          <Text type="subtitle" style={styles.sectionTitle}>
+            Avaliações ({reviews.length})
+          </Text>
+          
+          {loadingReviews ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : reviews.length > 0 ? (
+            reviews.map((review) => (
+              <View key={review.id} style={styles.reviewCard} color="background">
+                <View style={styles.reviewHeader} color="background">
+                  <View style={styles.reviewUser} color="background">
+                    <Text style={styles.reviewUsername}>{review.user.username}</Text>
+                    <Text color="textSecondary" style={styles.reviewDate}>
+                      {review.createdAt.toLocaleDateString('pt-BR')}
+                    </Text>
+                  </View>
+                  <View style={styles.reviewRating} color="background">
+                    <Text style={[styles.ratingText, { color: colors.rating }]}>
+                      ★
+                    </Text>
+                    <Text style={styles.reviewRatingText}>{review.rating.toFixed(1)}</Text>
+                  </View>
+                </View>
+                <Text color="textSecondary" style={styles.reviewComment}>
+                  {review.comment}
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text color="textSecondary">Nenhuma avaliação ainda</Text>
+          )}
+        </View>
+
         {/* Actions */}
         <View style={styles.actions} color="background">
           <Button
@@ -183,5 +232,39 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     marginTop: 8,
+  },
+  reviewCard: {
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    marginBottom: 12,
+  },
+  reviewHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 8,
+  },
+  reviewUser: {
+    flex: 1,
+  },
+  reviewUsername: {
+    fontWeight: "600",
+  },
+  reviewDate: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  reviewRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  reviewRatingText: {
+    fontWeight: "600",
+  },
+  reviewComment: {
+    lineHeight: 20,
   },
 });
