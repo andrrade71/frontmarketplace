@@ -36,14 +36,16 @@ export default function ProfileScreen() {
           const userData = await getUserProfile();
           setUser(userData);
           // fetch user's products
-          try {
-            setProductsLoading(true);
-            const list = await getProductsByUserId(String(userData.id));
-            setProducts(list);
-          } catch (e) {
-            console.warn("Failed to load user products", e);
-          } finally {
-            setProductsLoading(false);
+          if (userData?.id) {
+            try {
+              setProductsLoading(true);
+              const list = await getProductsByUserId(String(userData.id));
+              setProducts(list);
+            } catch (e) {
+              console.warn("Failed to load user products", e);
+            } finally {
+              setProductsLoading(false);
+            }
           }
         } catch (error) {
           // Token is invalid or expired, remove it
@@ -90,6 +92,18 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     await AsyncStorage.removeItem("authToken");
     setUser(null);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const list = await getProductsByUserId(String(user?.id));
+      setProducts(list);
+    } catch (e) {
+      console.warn("Failed to refresh user products", e);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (!user) {
@@ -188,8 +202,8 @@ export default function ProfileScreen() {
     );
   }
 
-  return (
-    <ScrollView style={styles.container}>
+  const renderHeader = () => (
+    <>
       {/* Header */}
       <View style={styles.header} color="background">
         <Avatar name={user.name} size={80} />
@@ -199,39 +213,22 @@ export default function ProfileScreen() {
         <Text color="textSecondary">{user.email}</Text>
       </View>
 
-      {/* Seus Produtos */}
+      {/* Seus Produtos Section Title */}
       <View style={styles.section} color="background">
         <Text type="subtitle" style={styles.sectionTitle}>
           Seus Produtos
         </Text>
-
-        {productsLoading ? (
+        {productsLoading && (
           <View style={{ paddingVertical: 12 }}>
             <ActivityIndicator size="small" color={colors.primary} />
           </View>
-        ) : products.length === 0 ? (
-          <Card style={{ padding: 16 }}>
-            <Text>Você ainda não anunciou produtos.</Text>
-            <Button title="Anunciar produto" onPress={() => {}} />
-          </Card>
-        ) : (
-          <FlatList
-            data={products}
-            keyExtractor={(item) => item.id}
-            horizontal={false}
-            numColumns={2}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
-            renderItem={({ item }) => (
-              <ProductCard
-                product={item}
-                onPress={(p) => router.push(`/product/${p.id}` as any)}
-              />
-            )}
-            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-          />
         )}
       </View>
+    </>
+  );
 
+  const renderFooter = () => (
+    <>
       {/* Settings */}
       <View style={styles.section} color="background">
         <Text type="subtitle" style={styles.sectionTitle}>
@@ -276,7 +273,43 @@ export default function ProfileScreen() {
       <View style={styles.section} color="background">
         <Button title="Sair" variant="outline" onPress={handleLogout} />
       </View>
-    </ScrollView>
+    </>
+  );
+
+  const renderEmptyProducts = () => (
+    <Card style={{ padding: 16, margin: 8 }}>
+      <Text style={{ textAlign: "center", marginBottom: 8 }}>
+        Você ainda não anunciou produtos.
+      </Text>
+      <Button title="Anunciar produto" onPress={() => {}} />
+    </Card>
+  );
+
+  return (
+    <FlatList
+      style={styles.container}
+      data={productsLoading ? [] : products}
+      keyExtractor={(item) => item.id}
+      numColumns={2}
+      columnWrapperStyle={
+        products.length > 0
+          ? { justifyContent: "space-between", marginHorizontal: 8 }
+          : undefined
+      }
+      ListHeaderComponent={renderHeader}
+      ListFooterComponent={renderFooter}
+      ListEmptyComponent={!productsLoading ? renderEmptyProducts : null}
+      renderItem={({ item }) => (
+        <ProductCard
+          product={item}
+          onPress={(p) => router.push(`/product/${p.id}` as any)}
+        />
+      )}
+      ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
+      contentContainerStyle={{ paddingBottom: 16 }}
+    />
   );
 }
 
