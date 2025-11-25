@@ -101,63 +101,65 @@ function ProductsList({
   }
 
   return (
-    <FlatList
-      data={products}
-      keyExtractor={(item) => item.id}
-      numColumns={2}
-      columnWrapperStyle={{
-        justifyContent: "space-between",
-        paddingHorizontal: 16,
-      }}
-      renderItem={({ item }) => (
-        <ProductCard product={item} onPress={onPressItem} />
-      )}
-      onEndReachedThreshold={0.5}
-      onEndReached={loadMore}
-      ListHeaderComponent={() => (
-        <View>
-          <SearchBar onSearch={onSearch} />
-          <View style={styles.section} color="background">
-            <Text type="subtitle" style={styles.sectionTitle}>
-              Categorias
-            </Text>
-            <View style={styles.categoriesGrid} color="background">
-              {categories.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  onPress={onCategoryPress}
-                />
-              ))}
+    <View color="background">
+      <FlatList
+        data={products}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          paddingHorizontal: 16,
+        }}
+        renderItem={({ item }) => (
+          <ProductCard product={item} onPress={onPressItem} />
+        )}
+        onEndReachedThreshold={0.5}
+        onEndReached={loadMore}
+        ListHeaderComponent={() => (
+          <View>
+            <SearchBar onSearch={onSearch} />
+            <View style={styles.section} color="background">
+              <Text type="subtitle" style={styles.sectionTitle}>
+                Categorias
+              </Text>
+              <View style={styles.categoriesGrid} color="background">
+                {categories.map((category) => (
+                  <CategoryCard
+                    key={category.id}
+                    category={category}
+                    onPress={onCategoryPress}
+                  />
+                ))}
+              </View>
+            </View>
+            <View style={styles.section} color="background">
+              <Text type="subtitle" style={styles.sectionTitle}>
+                Destaques
+              </Text>
+              <View style={styles.productsGrid} color="background">
+                {featuredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onPress={onPressItem}
+                  />
+                ))}
+              </View>
+            </View>
+            <View style={styles.section} color="background">
+              <Text type="subtitle" style={styles.sectionTitle}>
+                Todos os Produtos
+              </Text>
             </View>
           </View>
-          <View style={styles.section} color="background">
-            <Text type="subtitle" style={styles.sectionTitle}>
-              Destaques
-            </Text>
-            <View style={styles.productsGrid} color="background">
-              {featuredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onPress={onPressItem}
-                />
-              ))}
-            </View>
-          </View>
-          <View style={styles.section} color="background">
-            <Text type="subtitle" style={styles.sectionTitle}>
-              Todos os Produtos
-            </Text>
-          </View>
-        </View>
-      )}
-      ListFooterComponent={() =>
-        fetchProducts.isFetchingNextPage ? (
-          <ActivityIndicator style={{ marginVertical: 12 }} />
-        ) : null
-      }
-    />
+        )}
+        ListFooterComponent={() =>
+          fetchProducts.isFetchingNextPage ? (
+            <ActivityIndicator style={{ marginVertical: 12 }} />
+          ) : null
+        }
+      />
+    </View>
   );
 }
 

@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
@@ -42,25 +42,38 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+function ThemedStack() {
+  const { colors } = useTheme();
+
+  return (
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="product/[id]" options={{ title: "Produto",
+        headerTintColor: colors.text,
+        headerStyle: {
+          backgroundColor: colors.background,
+        },
+       }} />
+      <Stack.Screen name="search" options={{ title: "Buscar" }} />
+      <Stack.Screen
+        name="modal"
+        options={{
+          presentation: "modal",
+          title: "Modal",
+        }}
+      />
+    </Stack>
+  );
+}
+
 function RootLayoutNav() {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="product/[id]" options={{ title: "Produto" }} />
-          <Stack.Screen name="search" options={{ title: "Buscar" }} />
-          <Stack.Screen
-            name="modal"
-            options={{
-              presentation: "modal",
-              title: "Modal",
-            }}
-          />
-        </Stack>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemedStack />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
