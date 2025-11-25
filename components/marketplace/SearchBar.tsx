@@ -7,12 +7,14 @@ export type SearchBarProps = {
   placeholder?: string;
   onSearch?: (query: string) => void;
   onChangeText?: (text: string) => void;
+  containerStyle?: any;
 };
 
 export function SearchBar({
   placeholder = "Buscar produtos...",
   onSearch,
   onChangeText,
+  containerStyle,
 }: SearchBarProps) {
   const { colors } = useTheme();
   const [query, setQuery] = useState("");
@@ -27,7 +29,7 @@ export function SearchBar({
   };
 
   return (
-    <View style={styles.container} color="background">
+    <View style={[styles.container, containerStyle]} color="background">
       <View style={styles.searchContainer} color="background">
         <TextInput
           style={styles.input}
