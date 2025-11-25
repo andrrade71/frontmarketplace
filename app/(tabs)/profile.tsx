@@ -80,10 +80,24 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       const err = error as any;
-      Alert.alert(
-        "Erro no Login",
-        err.message || "Não foi possível fazer login"
-      );
+
+      // Map common auth errors to friendly Portuguese messages
+      let message = "Não foi possível fazer login";
+
+      if (err?.name === "AuthError" || err?.status) {
+        const status = err.status;
+        if (status === 401) {
+          message = "E-mail ou senha incorretos";
+        } else if (status === 404) {
+          message = "E-mail não cadastrado";
+        } else if (err.message) {
+          message = err.message;
+        }
+      } else if (err?.message) {
+        message = err.message;
+      }
+
+      Alert.alert("Erro no Login", message);
     } finally {
       setLoading(false);
     }
