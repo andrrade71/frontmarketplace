@@ -158,3 +158,112 @@ export async function getAllProductsPaginated(
     );
   }
 }
+
+/**
+ * Fetch products filtered by category.
+ * @param category - category name (e.g., "jewelery")
+ * @returns Array of normalized products
+ */
+export async function getProductsByCategory(category: string) {
+  try {
+    const token = await AsyncStorage.getItem("authToken");
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+
+    const response = await axios.get(`${BASE_URL}/products`, {
+      headers,
+      params: { category },
+    });
+
+    const apiProducts = response.data?.products || [];
+
+    const normalized = apiProducts.map((p: any) => ({
+      id: String(p.id),
+      name: p.title || p.name || "",
+      description: p.description || "",
+      price: typeof p.price === "string" ? parseFloat(p.price) : p.price || 0,
+      originalPrice: undefined,
+      discount: undefined,
+      image: p.image || (p.images && p.images[0]) || "",
+      images: p.images ? p.images : p.image ? [p.image] : [],
+      categoryId: p.categories?.id
+        ? String(p.categories.id)
+        : p.categoryId || "",
+      rating: p.rating?.rate || 0,
+      reviewsCount: p.rating?.count || 0,
+      inStock: true,
+    }));
+
+    return normalized;
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      await AsyncStorage.removeItem("authToken");
+    }
+    console.error(
+      "getProductsByCategory error:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch products by category"
+    );
+  }
+}
+
+/**
+ * Fetch products filtered by price range.
+ * @param {number} [min] - Minimum price value.
+ * @param {number} [max] - Maximum price value.
+ * @param {number} [page] - Page number for pagination.
+ * @param {number} [limit] - Number of items per page.
+ * @returns {Promise<{ products: Product[], pagination: Pagination }>} - Normalized products and pagination metadata.
+ */
+export async function getProductsByPrice(
+  min?: number,
+  max?: number,
+  page?: number,
+  limit?: number
+) {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const params: Record<string, any> = {};
+    if (min !== undefined) params.initialValue = min;
+    if (max !== undefined) params.finalValue = max;
+    if (page !== undefined) params.page = page;
+    if (limit !== undefined) params.limit = limit;
+
+    const response = await axios.get(`${BASE_URL}/products`, {
+      headers,
+      params,
+    });
+
+    const normalizedProducts = response.data.products.map((p: any) => ({
+      id: String(p.id),
+      name: p.title || p.name || "",
+      description: p.description || "",
+      price: typeof p.price === "string" ? parseFloat(p.price) : p.price || 0,
+      originalPrice: undefined,
+      discount: undefined,
+      image: p.image || (p.images && p.images[0]) || "",
+      images: p.images ? p.images : p.image ? [p.image] : [],
+      categoryId: p.categories?.id
+        ? String(p.categories.id)
+        : p.categoryId || "",
+      rating: p.rating?.rate || 0,
+      reviewsCount: p.rating?.count || 0,
+      inStock: true,
+    }));
+
+    return {
+      products: normalizedProducts,
+      pagination: {
+        page: response.data.page || 1,
+        totalPages: response.data.totalPages || 1,
+        totalItems: response.data.totalItems || normalizedProducts.length,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching products by price:", error);
+    throw error;
+  }
+}

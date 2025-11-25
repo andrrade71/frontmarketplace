@@ -24,8 +24,32 @@ export async function login(email: string, password: string) {
 
     return { user, token };
   } catch (error: any) {
-    console.error("Login failed:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Failed to login");
+    const status = error.response?.status;
+    const serverData = error.response?.data;
+    const serverMessage = serverData?.message || error.message;
+    const serverCode = serverData?.code;
+    console.error("Login failed:", serverData || error.message);
+
+    // Structured auth error so UI can handle different cases (401, 404, etc.)
+    class AuthError extends Error {
+      status?: number;
+      code?: string;
+      raw?: any;
+      constructor(message: string, status?: number, code?: string, raw?: any) {
+        super(message);
+        this.name = "AuthError";
+        this.status = status;
+        this.code = code;
+        this.raw = raw;
+      }
+    }
+
+    throw new AuthError(
+      serverMessage || "Failed to login",
+      status,
+      serverCode,
+      serverData
+    );
   }
 }
 
