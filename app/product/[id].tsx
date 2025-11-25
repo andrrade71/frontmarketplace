@@ -78,7 +78,11 @@ export default function ProductDetailScreen() {
   return (
     <ScrollView style={styles.container}>
       {/* Image */}
-      <Image source={{ uri: product.image }} style={styles.image} />
+      <Image
+        source={{ uri: product.image }}
+        style={[styles.image, { backgroundColor: colors.backgroundTertiary }]}
+        resizeMode="contain"
+      />
 
       {/* Product Info */}
       <View style={styles.content} color="background">
@@ -202,8 +206,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 400,
-    resizeMode: "cover",
+    height: 300,
   },
   content: {
     padding: 16,
