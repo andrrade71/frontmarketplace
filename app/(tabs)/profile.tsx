@@ -192,9 +192,9 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header} color="background">
-        <Avatar name={user.name} size={80} />
+        <Avatar name={user.username} size={80} />
         <Text type="title" style={styles.name}>
-          {user.name}
+          {user.username}
         </Text>
         <Text color="textSecondary">{user.email}</Text>
       </View>

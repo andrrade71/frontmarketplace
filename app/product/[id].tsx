@@ -1,12 +1,14 @@
 import { Text, View } from "@/components/Themed";
 import { Badge, Button } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
+import { addToCart } from "@/services/cart";
 import {
   getProductById,
   getProductReviews,
   ProductDetail,
   Review,
 } from "@/services/product";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet } from "react-native";
@@ -19,6 +21,7 @@ export default function ProductDetailScreen() {
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cartLoading, setCartLoading] = useState(false);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -177,8 +180,28 @@ export default function ProductDetailScreen() {
         <View style={styles.actions} color="background">
           <Button
             title="Adicionar ao Carrinho"
-            disabled={!product.inStock}
+            loading={cartLoading}
+            disabled={!product.inStock || cartLoading}
             style={{ flex: 1 }}
+            onPress={async () => {
+              const token = await AsyncStorage.getItem("authToken");
+
+              if (!token) {
+                router.push("/profile");
+                return;
+              }
+
+              setCartLoading(true);
+              try {
+                await addToCart(parseInt(product.id), 1);
+                router.push("/cart");
+              } catch (err: any) {
+                console.error("Failed to add to cart:", err);
+                alert(`Erro: ${err.message || 'Não foi possível adicionar ao carrinho'}`);
+              } finally {
+                setCartLoading(false);
+              }
+            }}
           />
           <Button
             title="Comprar Agora"

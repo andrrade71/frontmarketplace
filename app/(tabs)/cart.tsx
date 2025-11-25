@@ -1,28 +1,186 @@
+import { CartItem } from "@/components/marketplace/CartItem";
 import { ScrollView, Text, View } from "@/components/Themed";
 import { Button } from "@/components/ui";
-import React from "react";
-import { StyleSheet } from "react-native";
+import { useTheme } from "@/context/ThemeContext";
+import { getCart, removeItemFromCart, updateQuantityInCart } from "@/services/cart";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 
 export default function CartScreen() {
+  const { colors } = useTheme();
+  const [cartData, setCartData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
+
+  const handleRemoveItem = (productId: number) => {
+    if (!cartData) return;
+    
+    // Remove o item da lista local
+    const updatedItems = Array.isArray(cartData) 
+      ? cartData.filter(item => item.product?.id !== productId)
+      : cartData.items?.filter((item: any) => item.product?.id !== productId) || [];
+    
+    // Atualiza o estado mantendo a estrutura original
+    setCartData(updatedItems);
+
+    // Remove o item do carrinho no servidor
+    removeItemFromCart(productId).catch(error => {
+      console.error("Failed to remove item from cart:", error);
+
+    });
+  };
+
+  async function fetchCart() {
+    const token = await AsyncStorage.getItem("authToken");
+    if (!token) {
+      setCartData(null);
+      setLoading(false);
+      return;
+    }
+
+    setToken(token);
+    try {
+      const cartData = await getCart();
+      setCartData(cartData);
+    } catch (error) {
+      console.error("Failed to load cart:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchOnFocus() {
+        const testToken = await AsyncStorage.getItem("authToken");
+        if (token !== testToken) {
+          setLoading(true);
+          await fetchCart();
+        }
+      }
+
+      if (!token) {
+        return
+      }
+
+      fetchOnFocus();
+      }, [token, cartData])
+  )
+
+  if (loading) {
+      return (
+        <View style={[styles.container, styles.centered]}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      );
+  }
+
+  function emptyCart() {
+    return (
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <View style={styles.emptyState} color="background">
+          <Text style={styles.emptyIcon}>🛒</Text>
+          <Text type="subtitle" style={styles.emptyTitle}>
+            Seu carrinho está vazio
+          </Text>
+          <Text color="textSecondary" style={styles.emptyDescription}>
+            Adicione produtos ao carrinho para vê-los aqui
+          </Text>
+          <Button title="Explorar Produtos" style={styles.button} />
+        </View>
+      </ScrollView>
+    );
+  }
+
+  function filledCart() {
+    const items = cartData
+    
+    const total = items.reduce((sum: number, item: any) => {
+      return sum + ((item.product?.price || 0) * (item.quantity || 0));
+    }, 0);
+
+    return (
+      <FlatList
+        style={styles.container}
+        contentContainerStyle={{ padding: 20 }}
+        data={items}
+        keyExtractor={(item, index) => item.product?.id?.toString() || index.toString()}
+        ListHeaderComponent={() => (
+          <Text type="title" style={styles.headerTitle}>
+            Meu Carrinho ({items.length} {items.length === 1 ? 'item' : 'itens'})
+          </Text>
+        )}
+        renderItem={({ item }) => (
+          <CartItem 
+            item={item} 
+            onRemove={() => handleRemoveItem(item.product?.id)}
+            onQuantityChange={(newQuantity) => {
+              // Update quantity locally
+              const updatedItems = items.map((cartItem: any) => {
+                if (cartItem.product?.id === item.product?.id) {
+                  return { ...cartItem, quantity: newQuantity };
+                }
+                return cartItem;
+              }
+              );
+              setCartData(updatedItems);
+
+              // Update quantity on server
+              updateQuantityInCart(item.product?.id, newQuantity).catch(error => {
+                console.error("Failed to update item quantity:", error);
+              });
+            }}
+          />
+        )}
+        ListFooterComponent={() => (
+          <View style={styles.footer} color="background">
+            <View style={styles.totalContainer} color="background">
+              <Text type="subtitle" style={styles.totalLabel}>Total:</Text>
+              <Text type="title" style={[styles.totalValue, { color: colors.price }]}>
+                R$ {total.toFixed(2).replace('.', ',')}
+              </Text>
+            </View>
+            <Button 
+              title="Finalizar Compra" 
+              style={styles.checkoutButton}
+              onPress={() => console.log('Checkout')}
+            />
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <Text color="textSecondary" style={styles.emptyMessage}>
+            Nenhum item no carrinho
+          </Text>
+        )}
+      />
+    );
+  }
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.emptyState} color="background">
-        <Text style={styles.emptyIcon}>🛒</Text>
-        <Text type="subtitle" style={styles.emptyTitle}>
-          Seu carrinho está vazio
-        </Text>
-        <Text color="textSecondary" style={styles.emptyDescription}>
-          Adicione produtos ao carrinho para vê-los aqui
-        </Text>
-        <Button title="Explorar Produtos" style={styles.button} />
-      </View>
-    </ScrollView>
+    <View style={styles.container} color="background">
+      {loading ? 
+        <View style={[styles.container, styles.centered]}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View> 
+        :
+       (!cartData || Object.keys(cartData).length === 0 ? emptyCart() : filledCart())}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -48,5 +206,34 @@ const styles = StyleSheet.create({
   },
   button: {
     minWidth: 200,
+  },
+  headerTitle: {
+    marginBottom: 20,
+  },
+  footer: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+  },
+  totalContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  totalLabel: {
+    fontSize: 18,
+  },
+  totalValue: {
+    fontSize: 24,
+  },
+  checkoutButton: {
+    width: "100%",
+  },
+  emptyMessage: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
   },
 });
