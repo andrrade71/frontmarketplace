@@ -47,11 +47,11 @@ export async function getUserProfile() {
       },
     });
 
-    return response.data.data;
+    return response.data.profile;
   } catch (error: any) {
     console.error(
       "Failed to fetch user profile:",
-      error.response?.data || error.message
+      error.message
     );
     throw new Error(
       error.response?.data?.message || "Failed to fetch user profile"
