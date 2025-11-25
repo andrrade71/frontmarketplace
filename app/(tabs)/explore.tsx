@@ -6,13 +6,8 @@ import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState, useMemo } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function ExploreScreen() {
   const router = useRouter();
@@ -61,7 +56,10 @@ export default function ExploreScreen() {
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      if (activeFilters.categoryId && p.categoryId !== activeFilters.categoryId) {
+      if (
+        activeFilters.categoryId &&
+        p.categoryId !== activeFilters.categoryId
+      ) {
         return false;
       }
       if (
@@ -172,7 +170,9 @@ export default function ExploreScreen() {
                 style={styles.clearFiltersButton}
                 onPress={() => setActiveFilters({})}
               >
-                <Text style={styles.clearFiltersButtonText}>Limpar filtros</Text>
+                <Text style={styles.clearFiltersButtonText}>
+                  Limpar filtros
+                </Text>
               </TouchableOpacity>
             </View>
           ) : (

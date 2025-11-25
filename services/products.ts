@@ -185,7 +185,9 @@ export async function getProductsByCategory(category: string) {
       discount: undefined,
       image: p.image || (p.images && p.images[0]) || "",
       images: p.images ? p.images : p.image ? [p.image] : [],
-      categoryId: p.categories?.id ? String(p.categories.id) : p.categoryId || "",
+      categoryId: p.categories?.id
+        ? String(p.categories.id)
+        : p.categoryId || "",
       rating: p.rating?.rate || 0,
       reviewsCount: p.rating?.count || 0,
       inStock: true,
@@ -214,9 +216,14 @@ export async function getProductsByCategory(category: string) {
  * @param {number} [limit] - Number of items per page.
  * @returns {Promise<{ products: Product[], pagination: Pagination }>} - Normalized products and pagination metadata.
  */
-export async function getProductsByPrice(min?: number, max?: number, page?: number, limit?: number) {
+export async function getProductsByPrice(
+  min?: number,
+  max?: number,
+  page?: number,
+  limit?: number
+) {
   try {
-    const token = await AsyncStorage.getItem('token');
+    const token = await AsyncStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     const params: Record<string, any> = {};
@@ -225,7 +232,10 @@ export async function getProductsByPrice(min?: number, max?: number, page?: numb
     if (page !== undefined) params.page = page;
     if (limit !== undefined) params.limit = limit;
 
-    const response = await axios.get(`${BASE_URL}/products`, { headers, params });
+    const response = await axios.get(`${BASE_URL}/products`, {
+      headers,
+      params,
+    });
 
     const normalizedProducts = response.data.products.map((p: any) => ({
       id: String(p.id),
@@ -236,7 +246,9 @@ export async function getProductsByPrice(min?: number, max?: number, page?: numb
       discount: undefined,
       image: p.image || (p.images && p.images[0]) || "",
       images: p.images ? p.images : p.image ? [p.image] : [],
-      categoryId: p.categories?.id ? String(p.categories.id) : p.categoryId || "",
+      categoryId: p.categories?.id
+        ? String(p.categories.id)
+        : p.categoryId || "",
       rating: p.rating?.rate || 0,
       reviewsCount: p.rating?.count || 0,
       inStock: true,
@@ -251,7 +263,7 @@ export async function getProductsByPrice(min?: number, max?: number, page?: numb
       },
     };
   } catch (error) {
-    console.error('Error fetching products by price:', error);
+    console.error("Error fetching products by price:", error);
     throw error;
   }
 }
