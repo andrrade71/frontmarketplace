@@ -8,6 +8,7 @@ export type SearchBarProps = {
   onSearch?: (query: string) => void;
   onChangeText?: (text: string) => void;
   containerStyle?: any;
+  isDisabled?: boolean;
 };
 
 export function SearchBar({
@@ -15,6 +16,7 @@ export function SearchBar({
   onSearch,
   onChangeText,
   containerStyle,
+  isDisabled = false,
 }: SearchBarProps) {
   const { colors } = useTheme();
   const [query, setQuery] = useState("");
@@ -38,6 +40,7 @@ export function SearchBar({
           onChangeText={handleChangeText}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
+          editable={!isDisabled}
         />
         {query.length > 0 && (
           <TouchableOpacity onPress={() => handleChangeText("")}>

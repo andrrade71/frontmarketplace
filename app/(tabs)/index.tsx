@@ -1,5 +1,6 @@
 import { Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
+import PlaceHolder from "@/components/marketplace/PlaceHolder";
 import { getCategories } from "@/services/categories";
 import { getAllProductsPaginated } from "@/services/products";
 import { Category, Product } from "@/types";
@@ -97,7 +98,11 @@ function ProductsList({
   }, [fetchProducts]);
 
   if (fetchProducts.isLoading) {
-    return <ActivityIndicator size="large" style={{ marginTop: 24 }} />;
+    return (
+      <View color="background">
+        <PlaceHolder />
+      </View>
+    );
   }
 
   return (
