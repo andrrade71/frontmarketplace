@@ -1,4 +1,3 @@
-import { CartItem } from './../types/index';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
@@ -34,7 +33,7 @@ export async function addToCart(
       "addToCart error:",
       error.response?.data || error.message
     );
-    throw new Error(error.response?.data?.message || "Failed to add to cart");
+    throw new Error(error.response?.data?.message);
   }
 }
 
@@ -102,6 +101,29 @@ export async function updateQuantityInCart(
       "updateQuantityInCart error:",
       error.response?.data || error.message
     );
-    throw new Error(error.response?.data?.message || "Failed to update cart");
+    throw new Error(error.response?.data?.message);
+  }
+}
+
+export async function checkoutCart(): Promise<any> {
+    try {
+    const token = await AsyncStorage.getItem("authToken");
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+    const response = await axios.post(
+      `${BASE_URL}/cart/checkout`,
+      {},
+      { headers }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    if (error?.response?.status === 401) {
+      await AsyncStorage.removeItem("authToken");
+    }
+    console.error(
+      "checkoutCart error:",
+      error.response?.data || error.message
+    );
+    throw new Error(error.response?.data?.message);
   }
 }

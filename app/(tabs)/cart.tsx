@@ -1,12 +1,18 @@
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
+
 import { CartItem } from "@/components/marketplace/CartItem";
 import { ScrollView, Text, View } from "@/components/Themed";
 import { Button } from "@/components/ui";
 import { useTheme } from "@/context/ThemeContext";
-import { getCart, removeItemFromCart, updateQuantityInCart } from "@/services/cart";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
+import { 
+  getCart, 
+  removeItemFromCart, 
+  updateQuantityInCart,
+  checkoutCart 
+} from "@/services/cart";
 
 export default function CartScreen() {
   const { colors } = useTheme();
@@ -17,21 +23,53 @@ export default function CartScreen() {
   const handleRemoveItem = (productId: number) => {
     if (!cartData) return;
     
-    // Remove o item da lista local
+    // Remove item locally
     const updatedItems = Array.isArray(cartData) 
       ? cartData.filter(item => item.product?.id !== productId)
       : cartData.items?.filter((item: any) => item.product?.id !== productId) || [];
     
-    // Atualiza o estado mantendo a estrutura original
+    // Update state
     setCartData(updatedItems);
 
-    // Remove o item do carrinho no servidor
+    // Remove item on server
     removeItemFromCart(productId).catch(error => {
       console.error("Failed to remove item from cart:", error);
 
     });
   };
 
+  const handleQuantityChange = (productId: number, newQuantity: number) => {
+    if (!cartData) return;
+
+    // Update quantity locally
+    const updatedItems = cartData.map((item: any) => {
+      if (item.product?.id === productId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+
+    // Update state
+    setCartData(updatedItems);
+
+    // Update quantity on server
+    updateQuantityInCart(productId, newQuantity).catch(error => {
+      console.error("Failed to update item quantity:", error);
+    });
+  };
+
+  const handleCheckout = async () => {
+    try {
+      setLoading(true);
+      await checkoutCart();
+      setCartData(null); // Clear cart on successful checkout
+    } catch (error) {
+      console.error("Checkout failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   async function fetchCart() {
     const token = await AsyncStorage.getItem("authToken");
     if (!token) {
@@ -120,22 +158,7 @@ export default function CartScreen() {
           <CartItem 
             item={item} 
             onRemove={() => handleRemoveItem(item.product?.id)}
-            onQuantityChange={(newQuantity) => {
-              // Update quantity locally
-              const updatedItems = items.map((cartItem: any) => {
-                if (cartItem.product?.id === item.product?.id) {
-                  return { ...cartItem, quantity: newQuantity };
-                }
-                return cartItem;
-              }
-              );
-              setCartData(updatedItems);
-
-              // Update quantity on server
-              updateQuantityInCart(item.product?.id, newQuantity).catch(error => {
-                console.error("Failed to update item quantity:", error);
-              });
-            }}
+            onQuantityChange={(newQuantity) => handleQuantityChange(item.product?.id, newQuantity)}
           />
         )}
         ListFooterComponent={() => (
@@ -149,7 +172,7 @@ export default function CartScreen() {
             <Button 
               title="Finalizar Compra" 
               style={styles.checkoutButton}
-              onPress={() => console.log('Checkout')}
+              onPress={() => handleCheckout()}
             />
           </View>
         )}
