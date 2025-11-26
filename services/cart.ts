@@ -48,6 +48,7 @@ export async function getCart(): Promise<any> {
   } catch (error: any) {
     if (error?.response?.status === 401) {
       await AsyncStorage.removeItem("authToken");
+      alert("Sua sessão expirou. Por favor, faça login novamente.");
     } console.error(
         "getCart error:",
         error.response?.data || error.message
