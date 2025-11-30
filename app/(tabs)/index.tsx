@@ -1,4 +1,4 @@
-import { Text, View } from "@/components/Themed";
+import { ScrollView, Text, View } from "@/components/Themed";
 import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
 import PlaceHolder from "@/components/marketplace/PlaceHolder";
 import { getCategories } from "@/services/categories";
@@ -106,7 +106,7 @@ function ProductsList({
   }
 
   return (
-    <View color="background">
+    <ScrollView>
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
@@ -164,7 +164,7 @@ function ProductsList({
           ) : null
         }
       />
-    </View>
+    </ScrollView>
   );
 }
 
