@@ -4,11 +4,11 @@ import { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet } from "react-native";
 import { SearchBar } from "@/components/marketplace";
 
-const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 48) / 2;
-
 export default function PlaceHolder() {
     const opacity = useRef(new Animated.Value(0.3)).current;
+    const { width, height } = Dimensions.get("window");
+    const CARD_WIDTH = (width - 48) / 2;
+    const CARD_HEIGHT = (height / 4);
 
     useEffect(() => {
         Animated.loop(
@@ -27,15 +27,14 @@ export default function PlaceHolder() {
         ).start();
     }, [opacity]);
 
-    function placeholderList (placeholderLength: number, widthCard?: number, heightCard?: number) {
-        if (!widthCard) widthCard = CARD_WIDTH;
+    function placeholderList (placeholderLength: number, heightCard?: number) {
 
         const items = Array.from({ length: placeholderLength }).map((_, index) => (
         <Animated.View
             key={index}
             style={[
                 styles.placeholderCard,
-                { opacity, width: widthCard, height: heightCard  || CARD_WIDTH },
+                { opacity, width: CARD_WIDTH, height: CARD_HEIGHT },
             ]}
         />
         ));
@@ -45,17 +44,10 @@ export default function PlaceHolder() {
     
 
     return (
-        <ScrollView >
+        <ScrollView>
             <SearchBar isDisabled={true}/>
 
-            <Text type="subtitle" style={styles.sectionTitle}>
-                Categorias
-            </Text>
-            <View style={styles.container}>
-                {placeholderList(4, 105, 100)}
-            </View>
-
-            <Text type="subtitle" style={[styles.sectionTitle, {marginTop: 33}]}>
+            <Text type="subtitle" style={[styles.sectionTitle]}>
                 Destaques
             </Text>
             <View style={styles.container}>
@@ -77,11 +69,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
-        paddingHorizontal: 16,
-        gap: 15,
+        paddingHorizontal: 16
     },
     placeholderCard: {
-        height: CARD_WIDTH,
         backgroundColor: "#E5E7EB",
         borderRadius: 12,
         marginBottom: 16,

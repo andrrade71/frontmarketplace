@@ -1,9 +1,8 @@
-import { ScrollView, Text, View } from "@/components/Themed";
-import { CategoryCard, ProductCard, SearchBar } from "@/components/marketplace";
+import { Text, View } from "@/components/Themed";
+import { ProductCard, SearchBar } from "@/components/marketplace";
 import PlaceHolder from "@/components/marketplace/PlaceHolder";
-import { getCategories } from "@/services/categories";
 import { getAllProductsPaginated } from "@/services/products";
-import { Category, Product } from "@/types";
+import { Product } from "@/types";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo } from "react";
@@ -15,18 +14,6 @@ export default function HomeScreen() {
   const handleProductPress = (product: Product) => {
     router.push(`/product/${product.id}`);
   };
-
-  const handleCategoryPress = (category: Category) => {
-    router.push(`/search?category=${category.id}`);
-  };
-
-  // Fetch categories from API
-  const categoriesQuery = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-  });
-
-  const categories = categoriesQuery.data || [];
 
   const onSearch = (query: string) => {
     router.push(`/search?q=${query}`);
@@ -48,8 +35,6 @@ export default function HomeScreen() {
       onPressItem={handleProductPress}
       featuredProducts={featuredProducts}
       onSearch={onSearch}
-      onCategoryPress={handleCategoryPress}
-      categories={categories}
     />
   );
 }
@@ -58,14 +43,10 @@ function ProductsList({
   onPressItem,
   featuredProducts,
   onSearch,
-  onCategoryPress,
-  categories,
 }: {
   onPressItem: (p: Product) => void;
   featuredProducts: Product[];
   onSearch: (query: string) => void;
-  onCategoryPress: (category: Category) => void;
-  categories: Category[];
 }) {
   const PAGE_LIMIT = 10;
 
@@ -106,7 +87,7 @@ function ProductsList({
   }
 
   return (
-    <ScrollView>
+    <View style={styles.container} color="background">
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
@@ -123,20 +104,6 @@ function ProductsList({
         ListHeaderComponent={() => (
           <View>
             <SearchBar onSearch={onSearch} />
-            <View style={styles.section} color="background">
-              <Text type="subtitle" style={styles.sectionTitle}>
-                Categorias
-              </Text>
-              <View style={styles.categoriesGrid} color="background">
-                {categories.map((category) => (
-                  <CategoryCard
-                    key={category.id}
-                    category={category}
-                    onPress={onCategoryPress}
-                  />
-                ))}
-              </View>
-            </View>
             <View style={styles.section} color="background">
               <Text type="subtitle" style={styles.sectionTitle}>
                 Destaques
@@ -164,7 +131,7 @@ function ProductsList({
           ) : null
         }
       />
-    </ScrollView>
+    </View>
   );
 }
 
@@ -173,6 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   section: {
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
